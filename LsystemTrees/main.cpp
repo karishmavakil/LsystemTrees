@@ -16,140 +16,91 @@
 
 #define pi atan(1)*4
 
+#include "Vector3D.hpp"
+#include "RotationMatrix.hpp"
+#include "RollMatrix.hpp"
+#include "YawMatrix.hpp"
+#include "PitchMatrix.hpp"
+
 using namespace std;
 
-const GLint WIDTH = 800, HEIGHT = 600;
-
-const GLchar *vertexShaderSource = "#version 410 core\n"
-"layout (location = 0 ) in vec3 position;\n"
-"void main( )\n"
-"{\n"
-"gl_Position = vec4( position.x, position.y, position.z, 1.0 );\n"
-"}";
-
-const GLchar *fragmentShaderSource = "#version 410 core\n"
-"out vec4 color;\n"
-"void main( )\n"
-"{\n"
-"color = vec4( 1.0f, 0.5f, 0.2f, 1.0f);\n"
-"}";
-
-int main()
-{
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+void testVector3D() {
+    cout<<"Testing Vector: "<<endl;
     
-    GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Learn", nullptr, nullptr);
-    
-    int screenWidth, screenHeight;
-    glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
-    
-    if (nullptr == window) {
-        std::cout <<"Failed to create GLFW window" <<std::endl;
-        glfwTerminate();
-        
-        return -1;
-    }
-    glfwMakeContextCurrent(window);
-    
-    glewExperimental = GL_TRUE;
-    if ( GLEW_OK != glewInit()) {
-        std::cout <<"Failed to initialize GLEW" <<std::endl;
-        return -1;
-        
-    }
-    glViewport(0, 0, screenWidth, screenHeight);
-    
-    GLuint vertexShader = glCreateShader( GL_VERTEX_SHADER );
-    glShaderSource( vertexShader, 1, &vertexShaderSource, NULL );
-    glCompileShader( vertexShader );
-    GLint success;
-    GLchar infoLog[512];
-    
-    glGetShaderiv( vertexShader, GL_COMPILE_STATUS, &success );
-    if ( !success )
-    {
-        glGetShaderInfoLog( vertexShader, 512, NULL, infoLog );
-        std::cout <<"ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" <<infoLog <<std::endl;
-        
-    }
-    
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL );
-    glCompileShader( fragmentShader);
-    
-    glGetShaderiv( fragmentShader, GL_COMPILE_STATUS, &success);
-    
-    if ( !success)
-    {
-        glGetShaderInfoLog( fragmentShader, 512, NULL, infoLog );
-        std::cout <<"ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" <<infoLog <<std::endl;
-    }
-    
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader( shaderProgram, vertexShader);
-    glAttachShader( shaderProgram, fragmentShader);
-    glLinkProgram( shaderProgram);
-    
-    glGetProgramiv( shaderProgram, GL_LINK_STATUS, &success );
-    
-    if ( !success)
-    {
-        glGetProgramInfoLog( shaderProgram, 512, NULL, infoLog );
-        std::cout <<"ERROR::SHADER::PROGRAM::LINKING_FAILED\n" <<infoLog <<std::endl;
-    }
-
-    glDeleteShader( vertexShader);
-    glDeleteShader (fragmentShader);
-    
-    GLfloat vertices[]=
-    {
-        -0.5f, -0.5f, 0.2f, //bottom left
-        0.7f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.3f
-    };
-    
-    GLuint VBO, VAO;
-    
-    glGenVertexArrays( 1, &VAO);
-    glGenBuffers(1, &VBO);
-    
-    glBindVertexArray(VAO);
-    
-    glBindBuffer( GL_ARRAY_BUFFER, VBO);
-    glBufferData( GL_ARRAY_BUFFER, sizeof( vertices ), vertices, GL_STATIC_DRAW );
-    
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof( GLfloat), (GLvoid *) 0);
-    glEnableVertexAttribArray(0);
-    
-    glBindBuffer( GL_ARRAY_BUFFER, 0);
-    
-    glBindVertexArray( 0 );
-    
-    
-    while ((!glfwWindowShouldClose(window))) {
-        glfwPollEvents();
-        glClearColor(0.2f, 0.3f, 0.2f, 1.0f);
-        glClear( GL_COLOR_BUFFER_BIT);
-        
-        glUseProgram( shaderProgram );
-        glBindVertexArray( VAO );
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        glBindVertexArray(0);
-        
-        glfwSwapBuffers(window);
-        
-    }
-    
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteVertexArrays(1, &VBO);
-    glfwTerminate();
-     
-    return 0;
+    Vector3D v = Vector3D(1.0f, 1.0f, 3.55f);
+    //    cout<<"v: ";
+    //    v.printState();
+    Vector3D v2 = Vector3D(1.0f, 2.0f, 3.0f);
+    //    cout<<"v2: ";
+    //    v2.printState();
+    Vector3D v3 = v.add(v2);
+    //    cout<<"v3: ";
+    //    v3.printState();
+    //    cout<<endl;
+    cout<<(v3.equals(v)==false)<<endl;;
+    cout<<v3.equals(Vector3D(2.0f, 3.0f, 6.55f))<<endl;
+    v3.set(1.0f, 2.123f, 2.0f);
+    v3 = v3.scalar(1.5f);
+    //    cout<<"v3: ";
+    //    v3.printState();
+    cout<<v3.equals(Vector3D(1.5f, 3.1845f, 3.0f))<<endl;
+    cout<<(v3.equals(v)==false)<<endl;;
+    cout<<(v3.equals(v3)==true)<<endl;
+    //    cout<<(v.dot(v2)==13.65f)<<endl;
+    //    cout<<(v2.dot(v)==13.65f)<<endl;
+    //    cout<<(v3.getY()==4.5f)<<endl;
+    GLfloat a = v3.getY();
+    GLfloat b = 3.1845;
+    //    cout<<"a: "<<a<<" b: "<<b<<endl;
+    GLfloat e = 0.001f;
+    cout<<(fabs(v3.getX()-1.5f)<e)<<endl;
+    cout<<((fabs(3.1845f-a))< e)<<endl;
+    cout<<(fabs(b -a)<e)<<endl;
+    cout<<(v3.getY()==a)<<endl;
+    cout<<(fabs(v.dot(v2)-13.65f)<e)<<endl;
+    cout<<(fabs(v2.dot(v)-13.65f)<e)<<endl;
 }
-
+void testRotationMatrix() {
+    cout<<"Testing Rotation Matrix"<<endl;
+    RotationMatrix r = RotationMatrix();
+    r.printState();
+    cout<<"Roll Matrix: "<<endl;
+    cout<<"pi"<<endl;
+    RollMatrix(pi).printState();
+    cout<<"-pi"<<endl;
+    RollMatrix(-pi).printState();
+    cout<<"pi/2"<<endl;
+    RollMatrix(pi/2).printState();
+    cout<<"pi/4"<<endl;
+    RollMatrix(pi/4).printState();
+    cout<<"pi/6"<<endl;
+    RollMatrix(pi/6).printState();
+    cout<<"Yaw Matrix: "<<endl;
+    cout<<"pi"<<endl;
+    YawMatrix(pi).printState();
+    cout<<"-pi"<<endl;
+    YawMatrix(-pi).printState();
+    cout<<"pi/2"<<endl;
+    YawMatrix(pi/2).printState();
+    cout<<"pi/4"<<endl;
+    YawMatrix(pi/4).printState();
+    cout<<"pi/6"<<endl;
+    YawMatrix(pi/6).printState();
+    cout<<"Pitch Matrix: "<<endl;
+    cout<<"pi"<<endl;
+    PitchMatrix(pi).printState();
+    cout<<"-pi"<<endl;
+    PitchMatrix(-pi).printState();
+    cout<<"pi/2"<<endl;
+    PitchMatrix(pi/2).printState();
+    cout<<"pi/4"<<endl;
+    PitchMatrix(pi/4).printState();
+    cout<<"pi/6"<<endl;
+    PitchMatrix(pi/6).printState();
+}
+int main () {
+//    testVector3D();
+    testRotationMatrix();
+    
+}
 
