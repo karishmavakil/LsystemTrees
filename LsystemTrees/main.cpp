@@ -22,6 +22,7 @@
 #include "YawMatrix.hpp"
 #include "PitchMatrix.hpp"
 #include "DirectionMatrix.hpp"
+#include "Turtle.hpp"
 
 using namespace std;
 
@@ -136,11 +137,50 @@ void testDirectionMatrix() {
     cout<<"Rolled by pi/4"<<endl;
     dir.printState();
 }
-
+void testTurtle(){
+    Turtle turtle = Turtle();
+    turtle.printState();
+    cout<<endl;
+    turtle.getPos().printState();
+    turtle.getHeading().printState();
+    turtle.getUp().printState();
+    turtle.getLeft().printState();
+    
+    cout<<"Checking movement of turtle"<<endl;
+    turtle.forward(5);
+    turtle.printState();
+    cout<<endl;
+    turtle.getPos().printState();
+    turtle.getHeading().printState();
+    turtle.getUp().printState();
+    turtle.getLeft().printState();
+    turtle.yaw(pi/2);
+    turtle.printState();
+    turtle.forward(3);
+    turtle.printState();
+    cout<<endl;
+    turtle.getPos().printState();
+    turtle.getHeading().printState();
+    turtle.getUp().printState();
+    turtle.getLeft().printState();
+    turtle.pitch(pi/3);
+    turtle.printState();
+    turtle.forward(8);
+    turtle.printState();
+    
+    cout<<"Testing setters"<<endl;
+    turtle.setPos(1.0f, 2.3f, 4.5f);
+    turtle.setHeading(0, 1, 0);
+    turtle.setUp(0, 0, 1);
+    turtle.setLeft(-1, 0, 0);
+    turtle.printState();
+    turtle.getDir().printState();
+}
 int main () {
 //    testVector3D();
 //    testMatrix();
-    testDirectionMatrix();
+//    testDirectionMatrix();
+    testTurtle();
     
 }
 
