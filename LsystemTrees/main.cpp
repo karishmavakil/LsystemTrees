@@ -17,10 +17,11 @@
 #define pi atan(1)*4
 
 #include "Vector3D.hpp"
-#include "RotationMatrix.hpp"
+#include "Matrix.hpp"
 #include "RollMatrix.hpp"
 #include "YawMatrix.hpp"
 #include "PitchMatrix.hpp"
+#include "DirectionMatrix.hpp"
 
 using namespace std;
 
@@ -60,9 +61,9 @@ void testVector3D() {
     cout<<(fabs(v.dot(v2)-13.65f)<e)<<endl;
     cout<<(fabs(v2.dot(v)-13.65f)<e)<<endl;
 }
-void testRotationMatrix() {
+void testMatrix() {
     cout<<"Testing Rotation Matrix"<<endl;
-    RotationMatrix r = RotationMatrix();
+    Matrix r = Matrix();
     r.printState();
     cout<<"Roll Matrix: "<<endl;
     cout<<"pi"<<endl;
@@ -98,9 +99,48 @@ void testRotationMatrix() {
     cout<<"pi/6"<<endl;
     PitchMatrix(pi/6).printState();
 }
+void testDirectionMatrix() {
+    cout<<"Direction Matrix: "<<endl;
+    DirectionMatrix dir = DirectionMatrix();
+    dir.printState();
+    cout<<"Rotation Matrix: roll by pi "<<endl;
+    RollMatrix rotate = RollMatrix(pi);
+    rotate.printState();
+    dir.rotate(rotate);
+    cout<<"Rolled by pi - basically upside down from left side"<<endl;
+    dir.printState();
+    RollMatrix rotate2 = RollMatrix(-pi/2);
+    cout<<"Rotation Matrix: roll by -pi/2 "<<endl;
+    rotate2.printState();
+    dir.rotate(rotate2);
+    cout<<"Rolled by -pi/2 "<<endl;
+
+    dir.printState();
+    YawMatrix rotate3 = YawMatrix(pi/2);
+    dir.rotate(rotate3);
+    cout<<"Yawed by pi/2"<<endl;
+    dir.printState();
+    PitchMatrix rotate4 = PitchMatrix(-pi/2);
+    cout<<"pitch matrix -pi/2"<<endl;
+    rotate4.printState();
+    dir.rotate(rotate4);
+    cout<<"pitched by -pi/2"<<endl;
+    dir.printState();
+    RollMatrix rotate5 = RollMatrix(pi/4);
+    cout<<" roll matrix pi/4"<<endl;
+    dir.rotate(rotate5);
+    cout<<"Rolled by pi/4"<<endl;
+    dir.printState();
+    cout<<" roll matrix pi/4"<<endl;
+    dir.rotate(rotate5);
+    cout<<"Rolled by pi/4"<<endl;
+    dir.printState();
+}
+
 int main () {
 //    testVector3D();
-    testRotationMatrix();
+//    testMatrix();
+    testDirectionMatrix();
     
 }
 
