@@ -7,7 +7,7 @@
 //
 
 #include "YawMatrix.hpp"
-#include "RotationMatrix.hpp"
+#include "Matrix.hpp"
 #include <stdio.h>
 
 // third-party libraries

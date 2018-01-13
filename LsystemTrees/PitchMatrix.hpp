@@ -10,7 +10,7 @@
 #define PitchMatrix_hpp
 
 #include <stdio.h>
-#include "RotationMatrix.hpp"
+#include "Matrix.hpp"
 #include <stdio.h>
 
 // third-party libraries
@@ -26,7 +26,7 @@
 #include <iostream>
 using namespace std;
 
-class PitchMatrix : public RotationMatrix {
+class PitchMatrix : public Matrix {
 public:
     PitchMatrix(float angle);
 };

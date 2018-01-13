@@ -20,7 +20,7 @@
 
 
 #include <stdio.h>
-#include "RotationMatrix.hpp"
+#include "Matrix.hpp"
 #include <stdio.h>
 
 #include "Vector3D.hpp"
@@ -38,7 +38,7 @@
 #include <iostream>
 using namespace std;
 
-class YawMatrix : public RotationMatrix {
+class YawMatrix : public Matrix {
 public:
     YawMatrix(float angle);
 };

@@ -10,7 +10,7 @@
 #define RollMatrix_hpp
 
 #include <stdio.h>
-#include "RotationMatrix.hpp"
+#include "Matrix.hpp"
 #include <stdio.h>
 
 // third-party libraries
@@ -26,7 +26,7 @@
 #include <iostream>
 using namespace std;
 
-class RollMatrix : public RotationMatrix {
+class RollMatrix : public Matrix {
 public:
     RollMatrix(float angle);
 };
