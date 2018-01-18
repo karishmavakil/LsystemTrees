@@ -13,6 +13,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <cmath>
+#include <vector>
+#include <list>
 
 #define pi atan(1)*4
 
@@ -23,6 +25,9 @@
 #include "PitchMatrix.hpp"
 #include "DirectionMatrix.hpp"
 #include "Turtle.hpp"
+#include "Symbol.hpp"
+#include "D0LRule.hpp"
+#include "D0LSystem.hpp"
 
 using namespace std;
 
@@ -176,11 +181,299 @@ void testTurtle(){
     turtle.printState();
     turtle.getDir().printState();
 }
+void testSymbol() {
+    Symbol s = Symbol('k');
+    s.printState();
+    vector<GLfloat> p = vector<GLfloat>(3, 4.65f);
+    vector<GLfloat>::iterator it = p.end();
+    p.insert(it, 6.9f);
+    s = Symbol('h', p);
+    s.printState();
+    Symbol s2 = Symbol('h', p);
+    cout<<s2.equals(s)<<endl;
+    cout<<Symbol().equals(s);
+    Symbol().printState();
+}
+void testList(){
+    list<int> l = list<int>();
+    l.push_back(5);
+    list<int>::iterator it = l.begin();
+    cout<<*it<<endl;
+    l.push_back(6);
+    it++;
+    cout<<*it<<endl;
+}
+void testLSystem(){
+    vector<Symbol> output = vector<Symbol>();
+    Symbol s = Symbol('A');
+    output.push_back(s);
+    output.push_back(Symbol('B'));
+    Rule rule1 = Rule(Symbol('A'), output);
+    rule1.printState();
+    cout<<endl;
+    output.clear();
+    output.push_back(Symbol('C'));
+    Rule rule2 = Rule(Symbol('B'), output);
+    rule2.printState();
+    cout<<endl;
+    output.clear();
+    output.push_back('D');
+    output.push_back('B');
+    output.push_back('D');
+    Rule rule3 = Rule(Symbol('C'), output);
+    vector<Rule> rules = vector<Rule>();
+    rules.push_back(rule1);
+    rules.push_back(rule2);
+    rules.push_back(rule3);
+    LSystem d0l = LSystem(Symbol('A'), rules);
+    cout<<"Current ";
+    d0l.printCurrent();
+    cout<<endl;
+    d0l.applyRules();
+    d0l.applyRules();
+    d0l.applyRules();
+    d0l.applyRules();
+    d0l.applyRules();
+    d0l.applyRules(3);
+    output.clear();
+    output.push_back(Symbol('B'));
+    output.push_back(Symbol('B'));
+    rules.clear();
+    rules.push_back(Rule(Symbol('A'), output));
+    output.clear();
+    output.push_back('A');
+    output.push_back('B');
+    output.push_back('A');
+    rules.push_back(Rule(Symbol('B'), output));
+    LSystem d0l2 = LSystem('B', rules);
+    d0l2.applyRules(5);
+    
+}
+vector<Symbol> testD0LSystemTurtle() {
+    vector<Symbol> output = vector<Symbol>();
+    Symbol s = Symbol('F');
+    output.push_back(s);
+    output.push_back(Symbol('+'));
+    output.push_back(Symbol('F'));
+
+    Rule rule1 = Rule(Symbol('F'), output);
+    rule1.printState();
+    cout<<endl;
+    output.clear();
+    output.push_back(Symbol('-'));
+    output.push_back(Symbol('F'));
+
+    Rule rule2 = Rule(Symbol('-'), output);
+    rule2.printState();
+    cout<<endl;
+    output.clear();
+    output.push_back('+');
+    output.push_back('F');
+    output.push_back('-');
+    Rule rule3 = Rule(Symbol('+'), output);
+    vector<Rule> rules = vector<Rule>();
+    rules.push_back(rule1);
+    rules.push_back(rule2);
+    rules.push_back(rule3);
+    LSystem d0l = LSystem(Symbol('F'), rules);
+    cout<<"Current ";
+    d0l.printCurrent();
+    cout<<endl;
+    d0l.applyRules();
+    d0l.applyRules();
+
+    return d0l.current;
+}
+
+vector<Symbol> testTree() {
+    vector<Symbol> output = vector<Symbol>();
+    Symbol s = Symbol('F');
+    output.push_back(Symbol('F'));
+    output.push_back(Symbol('['));
+    output.push_back(Symbol('+'));
+    output.push_back(Symbol('F'));
+    output.push_back(Symbol(']'));
+    output.push_back(Symbol('F'));
+    output.push_back(Symbol('['));
+    output.push_back(Symbol('-'));
+    output.push_back(Symbol('F'));
+    output.push_back(Symbol(']'));
+    output.push_back(Symbol('F'));
+
+    Rule rule1 = Rule(Symbol('F'), output);
+    rule1.printState();
+    vector<Rule> rules = vector<Rule>();
+    rules.push_back(rule1);
+    LSystem d0l = LSystem(Symbol('F'), rules);
+    cout<<"Current ";
+    d0l.printCurrent();
+    cout<<endl;
+    d0l.applyRules();
+    d0l.applyRules();
+    d0l.applyRules();
+    d0l.applyRules();
+    return d0l.current;
+}
+int testGraphics() {
+    const GLint WIDTH = 800, HEIGHT = 600;
+    
+    const GLchar *vertexShaderSource = "#version 410 core\n"
+    "layout (location = 0 ) in vec3 position;\n"
+    "void main( )\n"
+    "{\n"
+    "gl_Position = vec4( position.x, position.y, position.z, 1.0 );\n"
+    "}";
+    
+    const GLchar *fragmentShaderSource = "#version 410 core\n"
+    "out vec4 color;\n"
+    "void main( )\n"
+    "{\n"
+    "color = vec4( 1.0f, 0.5f, 0.2f, 1.0f);\n"
+    "}";
+    
+    {
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    
+    GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Learn", nullptr, nullptr);
+    
+    int screenWidth, screenHeight;
+    glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
+    
+    if (nullptr == window) {
+        std::cout <<"Failed to create GLFW window" <<std::endl;
+        glfwTerminate();
+        
+        return -1;
+    }
+    glfwMakeContextCurrent(window);
+    
+    glewExperimental = GL_TRUE;
+    if ( GLEW_OK != glewInit()) {
+        std::cout <<"Failed to initialize GLEW" <<std::endl;
+        return -1;
+        
+    }
+    glViewport(0, 0, screenWidth, screenHeight);
+    
+    GLuint vertexShader = glCreateShader( GL_VERTEX_SHADER );
+    glShaderSource( vertexShader, 1, &vertexShaderSource, NULL );
+    glCompileShader( vertexShader );
+    GLint success;
+    GLchar infoLog[512];
+    
+    glGetShaderiv( vertexShader, GL_COMPILE_STATUS, &success );
+    if ( !success )
+    {
+        glGetShaderInfoLog( vertexShader, 512, NULL, infoLog );
+        std::cout <<"ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" <<infoLog <<std::endl;
+        
+    }
+    
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL );
+    glCompileShader( fragmentShader);
+    
+    glGetShaderiv( fragmentShader, GL_COMPILE_STATUS, &success);
+    
+    if ( !success)
+    {
+        glGetShaderInfoLog( fragmentShader, 512, NULL, infoLog );
+        std::cout <<"ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" <<infoLog <<std::endl;
+    }
+    
+    GLuint shaderProgram = glCreateProgram();
+    glAttachShader( shaderProgram, vertexShader);
+    glAttachShader( shaderProgram, fragmentShader);
+    glLinkProgram( shaderProgram);
+    
+    glGetProgramiv( shaderProgram, GL_LINK_STATUS, &success );
+    
+    if ( !success)
+    {
+        glGetProgramInfoLog( shaderProgram, 512, NULL, infoLog );
+        std::cout <<"ERROR::SHADER::PROGRAM::LINKING_FAILED\n" <<infoLog <<std::endl;
+    }
+    
+    glDeleteShader( vertexShader);
+    glDeleteShader (fragmentShader);
+    
+        
+    
+        
+    GLfloat vertices[10000]=
+    {
+//        -0.5f, -0.5f, 0.0f, //bottom left
+//        0.7f, -0.5f, 0.0f,
+//        0.0f, 0.5f, 0.0f,
+//        0.7f, -0.5f, 0.0f,
+
+    };
+
+        
+    Turtle turtle = Turtle();
+        turtle.setPos(0.0f, -0.85f, 0.0f);
+    vector<Vector3D> vert = turtle.draw2D(testTree());
+    int i = 0 ;
+    for (vector<Vector3D>::iterator it = vert.begin(); it != vert.end(); it++){
+        vertices[i] = it->getX();
+        cout<<" "<<i<<" ";
+        vertices[i+1] = it->getY();
+        vertices[i+2] = it->getZ();
+        i+=3;
+    }
+
+    GLuint VBO, VAO;
+    
+    glGenVertexArrays( 1, &VAO);
+    glGenBuffers(1, &VBO);
+    
+    glBindVertexArray(VAO);
+    
+    glBindBuffer( GL_ARRAY_BUFFER, VBO);
+    glBufferData( GL_ARRAY_BUFFER, sizeof( vertices ), vertices, GL_STATIC_DRAW );
+    
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 3 * sizeof( GLfloat), (GLvoid *) 0);
+    glEnableVertexAttribArray(0);
+    
+    glBindBuffer( GL_ARRAY_BUFFER, 0);
+    
+    glBindVertexArray( 0 );
+    
+    
+    while ((!glfwWindowShouldClose(window))) {
+        glfwPollEvents();
+        glClearColor(0.2f, 0.3f, 0.2f, 1.0f);
+        glClear( GL_COLOR_BUFFER_BIT);
+        
+        glUseProgram( shaderProgram );
+        glBindVertexArray( VAO );
+        glDrawArrays(GL_LINES, 0, 5000);
+        glBindVertexArray(0);
+        
+        glfwSwapBuffers(window);
+        
+    }
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteVertexArrays(1, &VBO);
+    glfwTerminate();
+    }
+    return 0;
+}
 int main () {
 //    testVector3D();
 //    testMatrix();
 //    testDirectionMatrix();
-    testTurtle();
+//    testTurtle();
+//    testSymbol();
+//    testList();
+//    testLSystem();
+    testGraphics();
+//    testD0LSystemTurtle();
     
 }
 
