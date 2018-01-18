@@ -24,16 +24,24 @@ Symbol::Symbol(char l, vector<GLfloat> p) {
     letter = l;
     parameters = p;
 }
-
 Symbol::Symbol(char l){
     letter = l;
     parameters = vector<GLfloat>();
 }
-
+Symbol::Symbol(){
+    letter = ' ';
+    parameters = vector<GLfloat>();
+}
 void Symbol::printState(){
-    cout<<"Letter: "<<letter<<" Parameters: ";
-    for (vector<GLfloat>::iterator it = parameters.begin(); it != parameters.end(); ++it){
-        cout<<*it<<" ";
+    
+    cout<<letter;
+    if(!parameters.empty()) {
+        cout<<" P: ";
+        for (vector<GLfloat>::iterator it = parameters.begin(); it != parameters.end(); ++it){
+            cout<<*it<<" ";
+        }
     }
-    cout<<endl;
+}
+bool Symbol::equals(Symbol s) {
+    return (s.letter==letter && s.parameters==parameters);
 }
