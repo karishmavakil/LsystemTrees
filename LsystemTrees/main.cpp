@@ -319,16 +319,20 @@ int testGraphics() {
     
     const GLchar *vertexShaderSource = "#version 410 core\n"
     "layout (location = 0 ) in vec3 position;\n"
+    "layout (location = 1) in vec3 vertexColor;\n"
+    "out vec3 fragmentColor;\n"
     "void main( )\n"
     "{\n"
     "gl_Position = vec4( position.x, position.y, position.z, 1.0 );\n"
+    "fragmentColor = vertexColor;\n"
     "}";
     
     const GLchar *fragmentShaderSource = "#version 410 core\n"
-    "out vec4 color;\n"
+    "in vec3 fragmentColor;\n"
+    "out vec3 color;\n"
     "void main( )\n"
     "{\n"
-    "color = vec4( 1.0f, 0.5f, 0.2f, 1.0f);\n"
+    "color = fragmentColor;\n"
     "}";
     
     {
@@ -407,25 +411,50 @@ int testGraphics() {
         
     GLfloat vertices[10000]=
     {
-//        -0.5f, -0.5f, 0.0f, //bottom left
-//        0.7f, -0.5f, 0.0f,
-//        0.0f, 0.5f, 0.0f,
-//        0.7f, -0.5f, 0.0f,
+        -0.5f, -0.5f, 0.0f, //bottom left
+        0.5f, -0.5f, 0.0f,
+        0.0f, 0.5f, 0.0f,
+        0.5f, -0.5f, 0.5f,
+        0.0f, 0.5f, 0.5f,
+        0.0f, 0.0f, 0.5f,
+        -0.5f, -0.5f, -0.53f, //bottom left
+        0.5f, -0.5f, -0.53f,
+        0.0f, -0.8f, -0.53f,
+        0.2f, -0.2f, -0.42f,
+        0.0f, 0.2f, -0.42f,
+        0.2f, 0.2f, -0.42f,
+
+    };
+    GLfloat colours[10000]=
+    {
+        0.5f, 0.5f, 0.2f, //bottom left
+        0.5f, 0.5f, 0.5f,
+        0.5f, 0.1f, 0.6f,
+        0.5f, 0.5f, 0.2f, //bottom left
+        0.5f, 0.5f, 0.5f,
+        0.3f, 0.8f, 0.6f,
+        0.1f, 0.1f, 0.6f,
+        0.1f, 0.5f, 0.2f, //bottom left
+        0.1f, 0.5f, 0.5f,
+        0.1f, 0.4f, 0.6f,
+        0.1f, 0.4f, 0.2f, //bottom left
+        0.1f, 0.4f, 0.5f,
+
 
     };
 
         
-    Turtle turtle = Turtle();
-        turtle.setPos(0.0f, -0.85f, 0.0f);
-    vector<Vector3D> vert = turtle.draw2D(testTree());
-    int i = 0 ;
-    for (vector<Vector3D>::iterator it = vert.begin(); it != vert.end(); it++){
-        vertices[i] = it->getX();
-        cout<<" "<<i<<" ";
-        vertices[i+1] = it->getY();
-        vertices[i+2] = it->getZ();
-        i+=3;
-    }
+//    Turtle turtle = Turtle();
+//        turtle.setPos(0.0f, -0.85f, 0.0f);
+//    vector<Vector3D> vert = turtle.draw2D(testTree());
+//    int i = 0 ;
+//    for (vector<Vector3D>::iterator it = vert.begin(); it != vert.end(); it++){
+//        vertices[i] = it->getX();
+//        cout<<" "<<i<<" ";
+//        vertices[i+1] = it->getY();
+//        vertices[i+2] = it->getZ();
+//        i+=3;
+//    }
 
     GLuint VBO, VAO;
     
@@ -439,20 +468,32 @@ int testGraphics() {
     
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 3 * sizeof( GLfloat), (GLvoid *) 0);
     glEnableVertexAttribArray(0);
-    
     glBindBuffer( GL_ARRAY_BUFFER, 0);
+
+    GLuint colorbuffer;
+    glGenBuffers(1, &colorbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(colours), colours, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     
     glBindVertexArray( 0 );
     
-    
     while ((!glfwWindowShouldClose(window))) {
+        
+        // Enable depth test
+        glEnable(GL_DEPTH_TEST);
+        // Accept fragment if it closer to the camera than the former one
+
+        glDepthFunc(GL_LESS);
         glfwPollEvents();
         glClearColor(0.2f, 0.3f, 0.2f, 1.0f);
-        glClear( GL_COLOR_BUFFER_BIT);
+        glClear( GL_COLOR_BUFFER_BIT |  GL_DEPTH_BUFFER_BIT);
         
         glUseProgram( shaderProgram );
         glBindVertexArray( VAO );
-        glDrawArrays(GL_LINES, 0, 5000);
+        glDrawArrays(GL_TRIANGLES, 0, 12);
         glBindVertexArray(0);
         
         glfwSwapBuffers(window);
