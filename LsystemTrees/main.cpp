@@ -8,6 +8,9 @@
 //GLFW
 #include <GLFW/glfw3.h>
 
+
+
+
 // standard C++ libraries
 #include <cassert>
 #include <iostream>
@@ -15,9 +18,14 @@
 #include <cmath>
 #include <vector>
 #include <list>
+#include <fstream>
+#include <cstdlib>
 
-#define pi atan(1)*4
 
+#define PI atan(1)*4
+
+#include "Window.hpp"
+#include "Shaders.hpp"
 #include "Vector3D.hpp"
 #include "Matrix.hpp"
 #include "RollMatrix.hpp"
@@ -30,6 +38,12 @@
 #include "D0LSystem.hpp"
 
 using namespace std;
+
+#include "glm/glm.hpp"
+#include "glm/gtx/transform.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
+using namespace glm;
 
 void testVector3D() {
     cout<<"Testing Vector: "<<endl;
@@ -72,74 +86,74 @@ void testMatrix() {
     Matrix r = Matrix();
     r.printState();
     cout<<"Roll Matrix: "<<endl;
-    cout<<"pi"<<endl;
-    RollMatrix(pi).printState();
-    cout<<"-pi"<<endl;
-    RollMatrix(-pi).printState();
-    cout<<"pi/2"<<endl;
-    RollMatrix(pi/2).printState();
-    cout<<"pi/4"<<endl;
-    RollMatrix(pi/4).printState();
-    cout<<"pi/6"<<endl;
-    RollMatrix(pi/6).printState();
+    cout<<"PI"<<endl;
+    RollMatrix(PI).printState();
+    cout<<"-PI"<<endl;
+    RollMatrix(-PI).printState();
+    cout<<"PI/2"<<endl;
+    RollMatrix(PI/2).printState();
+    cout<<"PI/4"<<endl;
+    RollMatrix(PI/4).printState();
+    cout<<"PI/6"<<endl;
+    RollMatrix(PI/6).printState();
     cout<<"Yaw Matrix: "<<endl;
-    cout<<"pi"<<endl;
-    YawMatrix(pi).printState();
-    cout<<"-pi"<<endl;
-    YawMatrix(-pi).printState();
-    cout<<"pi/2"<<endl;
-    YawMatrix(pi/2).printState();
-    cout<<"pi/4"<<endl;
-    YawMatrix(pi/4).printState();
-    cout<<"pi/6"<<endl;
-    YawMatrix(pi/6).printState();
+    cout<<"PI"<<endl;
+    YawMatrix(PI).printState();
+    cout<<"-PI"<<endl;
+    YawMatrix(-PI).printState();
+    cout<<"PI/2"<<endl;
+    YawMatrix(PI/2).printState();
+    cout<<"PI/4"<<endl;
+    YawMatrix(PI/4).printState();
+    cout<<"PI/6"<<endl;
+    YawMatrix(PI/6).printState();
     cout<<"Pitch Matrix: "<<endl;
-    cout<<"pi"<<endl;
-    PitchMatrix(pi).printState();
-    cout<<"-pi"<<endl;
-    PitchMatrix(-pi).printState();
-    cout<<"pi/2"<<endl;
-    PitchMatrix(pi/2).printState();
-    cout<<"pi/4"<<endl;
-    PitchMatrix(pi/4).printState();
-    cout<<"pi/6"<<endl;
-    PitchMatrix(pi/6).printState();
+    cout<<"PI"<<endl;
+    PitchMatrix(PI).printState();
+    cout<<"-PI"<<endl;
+    PitchMatrix(-PI).printState();
+    cout<<"PI/2"<<endl;
+    PitchMatrix(PI/2).printState();
+    cout<<"PI/4"<<endl;
+    PitchMatrix(PI/4).printState();
+    cout<<"PI/6"<<endl;
+    PitchMatrix(PI/6).printState();
 }
 void testDirectionMatrix() {
     cout<<"Direction Matrix: "<<endl;
     DirectionMatrix dir = DirectionMatrix();
     dir.printState();
-    cout<<"Rotation Matrix: roll by pi "<<endl;
-    RollMatrix rotate = RollMatrix(pi);
+    cout<<"Rotation Matrix: roll by PI "<<endl;
+    RollMatrix rotate = RollMatrix(PI);
     rotate.printState();
     dir.rotate(rotate);
-    cout<<"Rolled by pi - basically upside down from left side"<<endl;
+    cout<<"Rolled by PI - basically upside down from left side"<<endl;
     dir.printState();
-    RollMatrix rotate2 = RollMatrix(-pi/2);
-    cout<<"Rotation Matrix: roll by -pi/2 "<<endl;
+    RollMatrix rotate2 = RollMatrix(-PI/2);
+    cout<<"Rotation Matrix: roll by -PI/2 "<<endl;
     rotate2.printState();
     dir.rotate(rotate2);
-    cout<<"Rolled by -pi/2 "<<endl;
+    cout<<"Rolled by -PI/2 "<<endl;
 
     dir.printState();
-    YawMatrix rotate3 = YawMatrix(pi/2);
+    YawMatrix rotate3 = YawMatrix(PI/2);
     dir.rotate(rotate3);
-    cout<<"Yawed by pi/2"<<endl;
+    cout<<"Yawed by PI/2"<<endl;
     dir.printState();
-    PitchMatrix rotate4 = PitchMatrix(-pi/2);
-    cout<<"pitch matrix -pi/2"<<endl;
+    PitchMatrix rotate4 = PitchMatrix(-PI/2);
+    cout<<"pitch matrix -PI/2"<<endl;
     rotate4.printState();
     dir.rotate(rotate4);
-    cout<<"pitched by -pi/2"<<endl;
+    cout<<"pitched by -PI/2"<<endl;
     dir.printState();
-    RollMatrix rotate5 = RollMatrix(pi/4);
-    cout<<" roll matrix pi/4"<<endl;
+    RollMatrix rotate5 = RollMatrix(PI/4);
+    cout<<" roll matrix PI/4"<<endl;
     dir.rotate(rotate5);
-    cout<<"Rolled by pi/4"<<endl;
+    cout<<"Rolled by PI/4"<<endl;
     dir.printState();
-    cout<<" roll matrix pi/4"<<endl;
+    cout<<" roll matrix PI/4"<<endl;
     dir.rotate(rotate5);
-    cout<<"Rolled by pi/4"<<endl;
+    cout<<"Rolled by PI/4"<<endl;
     dir.printState();
 }
 void testTurtle(){
@@ -159,7 +173,7 @@ void testTurtle(){
     turtle.getHeading().printState();
     turtle.getUp().printState();
     turtle.getLeft().printState();
-    turtle.yaw(pi/2);
+    turtle.yaw(PI/2);
     turtle.printState();
     turtle.forward(3);
     turtle.printState();
@@ -168,7 +182,7 @@ void testTurtle(){
     turtle.getHeading().printState();
     turtle.getUp().printState();
     turtle.getLeft().printState();
-    turtle.pitch(pi/3);
+    turtle.pitch(PI/3);
     turtle.printState();
     turtle.forward(8);
     turtle.printState();
@@ -288,17 +302,39 @@ vector<Symbol> testD0LSystemTurtle() {
 vector<Symbol> testTree() {
     vector<Symbol> output = vector<Symbol>();
     Symbol s = Symbol('F');
+//    output.push_back(Symbol('F'));
+//    output.push_back(Symbol('['));
+//    output.push_back(Symbol('+'));
+//    output.push_back(Symbol('F'));
+//    output.push_back(Symbol(']'));
+//    output.push_back(Symbol('F'));
+//    output.push_back(Symbol('['));
+//    output.push_back(Symbol('-'));
+//    output.push_back(Symbol('F'));
+//    output.push_back(Symbol(']'));
+//    output.push_back(Symbol('F'));
     output.push_back(Symbol('F'));
     output.push_back(Symbol('['));
     output.push_back(Symbol('+'));
     output.push_back(Symbol('F'));
     output.push_back(Symbol(']'));
-    output.push_back(Symbol('F'));
     output.push_back(Symbol('['));
+    output.push_back(Symbol('%'));
+    output.push_back(Symbol('F'));
     output.push_back(Symbol('-'));
+    output.push_back(Symbol('%'));
+    
+    output.push_back(Symbol('F'));
+    output.push_back(Symbol(']'));
+    output.push_back(Symbol('%'));
+    output.push_back(Symbol('F'));
+
+    output.push_back(Symbol('['));
+    output.push_back(Symbol('/'));
     output.push_back(Symbol('F'));
     output.push_back(Symbol(']'));
     output.push_back(Symbol('F'));
+
 
     Rule rule1 = Rule(Symbol('F'), output);
     rule1.printState();
@@ -308,163 +344,65 @@ vector<Symbol> testTree() {
     cout<<"Current ";
     d0l.printCurrent();
     cout<<endl;
-    d0l.applyRules();
-    d0l.applyRules();
-    d0l.applyRules();
-    d0l.applyRules();
+    d0l.applyRules(4);
     return d0l.current;
 }
+
 int testGraphics() {
-    const GLint WIDTH = 800, HEIGHT = 600;
     
-    const GLchar *vertexShaderSource = "#version 410 core\n"
-    "layout (location = 0 ) in vec3 position;\n"
-    "layout (location = 1) in vec3 vertexColor;\n"
-    "out vec3 fragmentColor;\n"
-    "void main( )\n"
-    "{\n"
-    "gl_Position = vec4( position.x, position.y, position.z, 1.0 );\n"
-    "fragmentColor = vertexColor;\n"
-    "}";
+    GLFWwindow *window = createWindow();
     
-    const GLchar *fragmentShaderSource = "#version 410 core\n"
-    "in vec3 fragmentColor;\n"
-    "out vec3 color;\n"
-    "void main( )\n"
-    "{\n"
-    "color = fragmentColor;\n"
-    "}";
-    
-    {
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-    
-    GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Learn", nullptr, nullptr);
-    
-    int screenWidth, screenHeight;
-    glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
-    
-    if (nullptr == window) {
-        std::cout <<"Failed to create GLFW window" <<std::endl;
-        glfwTerminate();
+    GLuint shaderProgram = LoadShaders("/Users/karishmavakil/Documents/Project/LSystemTrees/LSystemTrees/vert.shader", "/Users/karishmavakil/Documents/Project/LSystemTrees/LSystemTrees/frag.shader");
         
-        return -1;
-    }
-    glfwMakeContextCurrent(window);
-    
-    glewExperimental = GL_TRUE;
-    if ( GLEW_OK != glewInit()) {
-        std::cout <<"Failed to initialize GLEW" <<std::endl;
-        return -1;
-        
-    }
-    glViewport(0, 0, screenWidth, screenHeight);
-    
-    GLuint vertexShader = glCreateShader( GL_VERTEX_SHADER );
-    glShaderSource( vertexShader, 1, &vertexShaderSource, NULL );
-    glCompileShader( vertexShader );
-    GLint success;
-    GLchar infoLog[512];
-    
-    glGetShaderiv( vertexShader, GL_COMPILE_STATUS, &success );
-    if ( !success )
-    {
-        glGetShaderInfoLog( vertexShader, 512, NULL, infoLog );
-        std::cout <<"ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" <<infoLog <<std::endl;
-        
-    }
-    
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL );
-    glCompileShader( fragmentShader);
-    
-    glGetShaderiv( fragmentShader, GL_COMPILE_STATUS, &success);
-    
-    if ( !success)
-    {
-        glGetShaderInfoLog( fragmentShader, 512, NULL, infoLog );
-        std::cout <<"ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" <<infoLog <<std::endl;
-    }
-    
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader( shaderProgram, vertexShader);
-    glAttachShader( shaderProgram, fragmentShader);
-    glLinkProgram( shaderProgram);
-    
-    glGetProgramiv( shaderProgram, GL_LINK_STATUS, &success );
-    
-    if ( !success)
-    {
-        glGetProgramInfoLog( shaderProgram, 512, NULL, infoLog );
-        std::cout <<"ERROR::SHADER::PROGRAM::LINKING_FAILED\n" <<infoLog <<std::endl;
-    }
-    
-    glDeleteShader( vertexShader);
-    glDeleteShader (fragmentShader);
-    
-        
-    
-        
-    GLfloat vertices[10000]=
-    {
-        -0.5f, -0.5f, 0.0f, //bottom left
-        0.5f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.0f,
-        0.5f, -0.5f, 0.5f,
-        0.0f, 0.5f, 0.5f,
-        0.0f, 0.0f, 0.5f,
-        -0.5f, -0.5f, -0.53f, //bottom left
-        0.5f, -0.5f, -0.53f,
-        0.0f, -0.8f, -0.53f,
-        0.2f, -0.2f, -0.42f,
-        0.0f, 0.2f, -0.42f,
-        0.2f, 0.2f, -0.42f,
+    // Get a handle for our "MVP" uniform
+    GLuint MatrixID = glGetUniformLocation(shaderProgram, "MVP");
+    // Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
+    glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+    // Camera matrix
+    glm::mat4 View = glm::lookAt(
+                                 glm::vec3(0,-2,2), // Camera is at (4,3,3), in World Space
+                                 glm::vec3(0,0,0), // and looks at the origin
+                                 glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
+                                );
+    // Model matrix : an identity matrix (model will be at the origin)
+    glm::mat4 Model      = glm::mat4(1.0f);
+   //glm::mat4 Model = glm::translate(glm::mat4(), glm::vec3(0.4f, 0.6f, 0.0f));
+    glm::mat4 MVP        = Projection * View * Model;
 
-    };
-    GLfloat colours[10000]=
-    {
-        0.5f, 0.5f, 0.2f, //bottom left
-        0.5f, 0.5f, 0.5f,
-        0.5f, 0.1f, 0.6f,
-        0.5f, 0.5f, 0.2f, //bottom left
-        0.5f, 0.5f, 0.5f,
-        0.3f, 0.8f, 0.6f,
-        0.1f, 0.1f, 0.6f,
-        0.1f, 0.5f, 0.2f, //bottom left
-        0.1f, 0.5f, 0.5f,
-        0.1f, 0.4f, 0.6f,
-        0.1f, 0.4f, 0.2f, //bottom left
-        0.1f, 0.4f, 0.5f,
+    
+    GLfloat vertices[1000000] = {};
+    GLfloat colors[1000000] = {};
 
+    Turtle turtle = Turtle();
+    turtle.setPos(0.0f, -0.98f, 0.0f);
+    vector<Vector3D> vert = turtle.draw3D(testTree());
+    int i = 0 ;
+    for (vector<Vector3D>::iterator it = vert.begin(); it != vert.end(); it++){
+        vertices[i] = it->getX();
+        vertices[i+1] = it->getY();
+        vertices[i+2] = it->getZ();
+        if (i%2==0){
+            colors[i] = 0.2f;
+            colors[i+1] = 0.1f;
+            colors[i+2] = 0.4f;
+        }
+        else {
+            colors[i] = 0.1f;
+            colors[i+1] = 0.7f;
+            colors[i+2] = 0.4f;
+        }
+        i+=3;
+    }
 
-    };
-
-        
-//    Turtle turtle = Turtle();
-//        turtle.setPos(0.0f, -0.85f, 0.0f);
-//    vector<Vector3D> vert = turtle.draw2D(testTree());
-//    int i = 0 ;
-//    for (vector<Vector3D>::iterator it = vert.begin(); it != vert.end(); it++){
-//        vertices[i] = it->getX();
-//        cout<<" "<<i<<" ";
-//        vertices[i+1] = it->getY();
-//        vertices[i+2] = it->getZ();
-//        i+=3;
-//    }
-
-    GLuint VBO, VAO;
+    GLuint vertexbuffer, VAO;
     
     glGenVertexArrays( 1, &VAO);
-    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &vertexbuffer);
     
     glBindVertexArray(VAO);
     
-    glBindBuffer( GL_ARRAY_BUFFER, VBO);
-    glBufferData( GL_ARRAY_BUFFER, sizeof( vertices ), vertices, GL_STATIC_DRAW );
+    glBindBuffer( GL_ARRAY_BUFFER, vertexbuffer);
+    glBufferData( GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW );
     
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 3 * sizeof( GLfloat), (GLvoid *) 0);
     glEnableVertexAttribArray(0);
@@ -473,10 +411,11 @@ int testGraphics() {
     GLuint colorbuffer;
     glGenBuffers(1, &colorbuffer);
     glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(colours), colours, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+        
     
     glBindVertexArray( 0 );
     
@@ -492,17 +431,24 @@ int testGraphics() {
         glClear( GL_COLOR_BUFFER_BIT |  GL_DEPTH_BUFFER_BIT);
         
         glUseProgram( shaderProgram );
+        
+        // Send our transformation to the currently bound shader,
+        // in the "MVP" uniform
+        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+        
         glBindVertexArray( VAO );
-        glDrawArrays(GL_TRIANGLES, 0, 12);
+        glDrawArrays(GL_LINES, 0, 50000);
         glBindVertexArray(0);
         
         glfwSwapBuffers(window);
         
     }
     glDeleteVertexArrays(1, &VAO);
-    glDeleteVertexArrays(1, &VBO);
+    glDeleteVertexArrays(1, &vertexbuffer);
+    glDeleteVertexArrays(1, &colorbuffer);
+
     glfwTerminate();
-    }
+
     return 0;
 }
 int main () {
@@ -517,4 +463,5 @@ int main () {
 //    testD0LSystemTurtle();
     
 }
+
 
