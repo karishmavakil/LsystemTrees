@@ -27,9 +27,9 @@ using namespace std;
 
 
 DirectionMatrix::DirectionMatrix() {
-    col1 = Vector3D(1.0f, 0.0f, 0.0f);
+    col1 = Vector3D(0.0f, 1.0f, 0.0f);
     col2 = Vector3D(0.0f, 0.0f, 1.0f);
-    col3 = Vector3D(0.0f, 1.0f, 0.0f);
+    col3 = Vector3D(-1.0f, 0.0f, 0.0f);
 }
 void DirectionMatrix::rotate(Matrix r) {
     Vector3D row1 = Vector3D(col1.getX(), col2.getX(), col3.getX());
