@@ -29,12 +29,13 @@ using namespace std;
 class Symbol {
 public:
     char letter;
-    vector<GLfloat> parameters;
-    Symbol(char l, vector<GLfloat> p);
+    string parameters;
+    Symbol(char l, string p);
     Symbol(char l);
     Symbol();
     void printState();
     bool equals(Symbol);
+    vector<GLfloat> getParameters();
 };
 
 #endif /* Symbol_hpp */

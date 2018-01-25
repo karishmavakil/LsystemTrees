@@ -32,7 +32,8 @@ void LSystem::applyRules(){
         bool found = false;
         //iterate over all rules
         for(itRul = rules.begin(); itRul!= rules.end(); itRul++) {
-            cout<<" rule input "<<itRul->input.letter<<" ";
+            cout<<" rule input ";
+            itRul->input.printState();
             //if you find a rule whose input matches the current Symbol
             if(itRul->isApplicable(*itCur)){
                 cout<<" matched ";

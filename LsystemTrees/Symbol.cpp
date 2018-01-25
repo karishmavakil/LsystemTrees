@@ -19,29 +19,38 @@
 #include <vector>
 #include <vector>
 #include <iostream>
+#include <sstream>
+using namespace std;
 
-Symbol::Symbol(char l, vector<GLfloat> p) {
+Symbol::Symbol(char l, string p) {
     letter = l;
     parameters = p;
 }
 Symbol::Symbol(char l){
     letter = l;
-    parameters = vector<GLfloat>();
+    parameters = "";
 }
 Symbol::Symbol(){
     letter = ' ';
-    parameters = vector<GLfloat>();
+    parameters = "";
 }
 void Symbol::printState(){
     
     cout<<letter;
     if(!parameters.empty()) {
-        cout<<" P: ";
-        for (vector<GLfloat>::iterator it = parameters.begin(); it != parameters.end(); ++it){
-            cout<<*it<<" ";
-        }
+        cout<<parameters;
     }
 }
 bool Symbol::equals(Symbol s) {
     return (s.letter==letter && s.parameters==parameters);
+}
+vector<GLfloat> Symbol::getParameters() {
+    vector<GLfloat> parameterList;
+    string p = parameters.size()>1 ? parameters.substr(1, parameters.size()-2) : "";
+    stringstream ss(p);
+    string val;
+    while (getline(ss, val, ',')){
+        parameterList.push_back(stof(val));
+    }
+    return parameterList;
 }

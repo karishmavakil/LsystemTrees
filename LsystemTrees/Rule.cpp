@@ -19,7 +19,7 @@ Rule::Rule(Symbol in, vector<Symbol> out) : input(in){
     output = out;
 }
 bool Rule::isApplicable(Symbol in){
-    return (in.letter==input.letter);
+    return (in.equals(input));
 }
 vector<Symbol> Rule::apply(Symbol in){
     return output;
