@@ -36,6 +36,7 @@
 #include "Symbol.hpp"
 #include "D0LRule.hpp"
 #include "D0LSystem.hpp"
+#include "Reader.hpp"
 
 using namespace std;
 
@@ -198,12 +199,22 @@ void testTurtle(){
 void testSymbol() {
     Symbol s = Symbol('k');
     s.printState();
-    vector<GLfloat> p = vector<GLfloat>(3, 4.65f);
-    vector<GLfloat>::iterator it = p.end();
-    p.insert(it, 6.9f);
-    s = Symbol('h', p);
-    s.printState();
-    Symbol s2 = Symbol('h', p);
+    cout<<endl<<" Testing parameters: ";
+    vector<GLfloat> p = s.getParameters();
+    if (p.empty()) {
+        cout<<"no parameters ";
+    }
+    for(vector<GLfloat>::iterator it = p.begin(); it != p.end(); it++){
+        cout<<*it<<" "<<*it+1<<" ";
+    }
+    string para = "(1.0,2.2,3)";
+    Symbol s2 = Symbol('h', para);
+    s2.printState();
+    cout<<endl<<" Testing parameters: ";
+    vector<GLfloat> p2 = s2.getParameters();
+    for(vector<GLfloat>::iterator it = p2.begin(); it != p2.end(); it++){
+        cout<<*it<<" "<<*it+1<<" ";
+    }
     cout<<s2.equals(s)<<endl;
     cout<<Symbol().equals(s);
     Symbol().printState();
@@ -348,6 +359,14 @@ vector<Symbol> testTree() {
     return d0l.current;
 }
 
+void testReader(){
+    LSystem d0l = createLsystem("/Users/karishmavakil/Documents/Project/LSystemTrees/LSystemTrees/lsystem1.txt");
+    cout<<"Current ";
+    d0l.printCurrent();
+    cout<<endl;
+    d0l.applyRules(5);
+}
+
 int testGraphics() {
     
     GLFWwindow *window = createWindow();
@@ -360,7 +379,7 @@ int testGraphics() {
     glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
     // Camera matrix
     glm::mat4 View = glm::lookAt(
-                                 glm::vec3(0,-2,2), // Camera is at (4,3,3), in World Space
+                                 glm::vec3(2,0,7), // Camera is at (4,3,3), in World Space
                                  glm::vec3(0,0,0), // and looks at the origin
                                  glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
                                 );
@@ -374,22 +393,24 @@ int testGraphics() {
     GLfloat colors[1000000] = {};
 
     Turtle turtle = Turtle();
-    turtle.setPos(0.0f, -0.98f, 0.0f);
-    vector<Vector3D> vert = turtle.draw3D(testTree());
+    turtle.setPos(0.0f, -2.0f, 0.0f);
+    LSystem tree = createLsystem("/Users/karishmavakil/Documents/Project/LSystemTrees/LSystemTrees/tree.txt");
+    tree.applyRules(5);
+    vector<Vector3D> vert = turtle.draw3D(tree.current);
     int i = 0 ;
     for (vector<Vector3D>::iterator it = vert.begin(); it != vert.end(); it++){
         vertices[i] = it->getX();
         vertices[i+1] = it->getY();
         vertices[i+2] = it->getZ();
         if (i%2==0){
-            colors[i] = 0.2f;
-            colors[i+1] = 0.1f;
-            colors[i+2] = 0.4f;
+            colors[i] = 0.0f;
+            colors[i+1] = 0.8f;
+            colors[i+2] = 0.0f;
         }
         else {
-            colors[i] = 0.1f;
-            colors[i+1] = 0.7f;
-            colors[i+2] = 0.4f;
+            colors[i] = 0.0f;
+            colors[i+1] = 0.5f;
+            colors[i+2] = 0.2f;
         }
         i+=3;
     }
@@ -427,7 +448,7 @@ int testGraphics() {
 
         glDepthFunc(GL_LESS);
         glfwPollEvents();
-        glClearColor(0.2f, 0.3f, 0.2f, 1.0f);
+        glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
         glClear( GL_COLOR_BUFFER_BIT |  GL_DEPTH_BUFFER_BIT);
         
         glUseProgram( shaderProgram );
@@ -461,6 +482,7 @@ int main () {
 //    testLSystem();
     testGraphics();
 //    testD0LSystemTurtle();
+//    testReader();
     
 }
 
