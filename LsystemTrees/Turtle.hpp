@@ -18,8 +18,11 @@
 #include <iostream>
 #include <stdexcept>
 #include <cmath>
+#include <vector>
 
 #include "DirectionMatrix.hpp"
+#include "Symbol.hpp"
+#include "Vector3D.hpp"
 #include <iostream>
 using namespace std;
 #include <stdio.h>
@@ -43,6 +46,9 @@ public:
     void roll(GLfloat angle);
     void yaw(GLfloat angle);
     void pitch(GLfloat angle);
+    vector<Vector3D> draw2D(vector<Symbol>);
+    vector<Vector3D> draw3D(vector<Symbol>);
+
 };
 
 #endif /* Turtle_hpp */

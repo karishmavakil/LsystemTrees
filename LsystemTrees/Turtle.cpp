@@ -13,6 +13,7 @@
 #include "RollMatrix.hpp"
 #include "YawMatrix.hpp"
 #include "PitchMatrix.hpp"
+#include "Symbol.hpp"
 
 // third-party libraries
 #include <GL/glew.h>
@@ -23,6 +24,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <cmath>
+#include <stack>
 
 #include <iostream>
 using namespace std;
@@ -71,4 +73,87 @@ void Turtle::yaw(GLfloat angle){
 void Turtle::pitch(GLfloat angle){
     PitchMatrix rotation = PitchMatrix(angle);
     direction.rotate(rotation);
+}
+vector<Vector3D> Turtle::draw2D(vector<Symbol> symbols){
+    vector<Vector3D> vertices = vector<Vector3D>();
+    stack<Vector3D> positionStack = stack<Vector3D>();
+    stack<DirectionMatrix> directionStack = stack<DirectionMatrix>();
+    for(vector<Symbol>::iterator itSym = symbols.begin(); itSym != symbols.end(); itSym++) {
+        switch (itSym->letter) {
+            case 'F':
+                vertices.push_back(position);
+                forward(.015f);
+                vertices.push_back(position);
+                break;
+            case '+':
+                yaw(0.5);
+                break;
+            case '-':
+                yaw(-0.5);
+                break;
+            case '[':
+                positionStack.push(position);
+                directionStack.push(direction);
+                break;
+            case ']':
+                position = positionStack.top();
+                positionStack.pop();
+                direction = directionStack.top();
+                directionStack.pop();
+                break;
+            default:
+                break;
+        }
+    }    
+    return vertices;
+}
+vector<Vector3D> Turtle::draw3D(vector<Symbol> symbols){
+    vector<Vector3D> vertices = vector<Vector3D>();
+    stack<Vector3D> positionStack = stack<Vector3D>();
+    stack<DirectionMatrix> directionStack = stack<DirectionMatrix>();
+    for(vector<Symbol>::iterator itSym = symbols.begin(); itSym != symbols.end(); itSym++) {
+        vector<GLfloat> p = itSym->getParameters();
+        switch (itSym->letter) {
+            case 'F':
+                vertices.push_back(position);
+                forward(p[0]*0.03f);
+                vertices.push_back(position);
+                break;
+            case 'f':
+                forward(0.15f);
+                break;
+            case '+':
+                yaw(0.5);
+                break;
+            case '-':
+                yaw(-0.5);
+                break;
+            case '&':
+                pitch(0.5);
+                break;
+            case '^':
+                pitch(-0.5);
+                break;
+            case '/':
+                roll(0.5);
+                break;
+            case '\\':
+                roll(-0.5);
+                break;
+            case '[':
+                positionStack.push(position);
+                directionStack.push(direction);
+                break;
+            case ']':
+                position = positionStack.top();
+                positionStack.pop();
+                direction = directionStack.top();
+                directionStack.pop();
+                break;
+            default:
+                break;
+        }
+    }
+    
+    return vertices;
 }
