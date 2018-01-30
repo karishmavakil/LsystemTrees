@@ -23,34 +23,40 @@
 #include "DirectionMatrix.hpp"
 #include "Symbol.hpp"
 #include "Vector3D.hpp"
+#include "glm/glm.hpp"
+#include "glm/gtx/transform.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/ext.hpp"
+using namespace glm;
 #include <iostream>
 using namespace std;
 #include <stdio.h>
 
 class Turtle {
-    Vector3D position;
-    DirectionMatrix direction;
+    vec3 position;
+    vec3 heading;
+    vec3 left;
+    vec3 up;
 public:
     Turtle();
-    void setPos (GLfloat xpos, GLfloat ypos, GLfloat zpos);
+    void setPosition (GLfloat xpos, GLfloat ypos, GLfloat zpos);
     void setHeading (GLfloat xpos, GLfloat ypos, GLfloat zpos);
     void setLeft (GLfloat xpos, GLfloat ypos, GLfloat zpos);
     void setUp (GLfloat xpos, GLfloat ypos, GLfloat zpos);
     void forward(GLfloat step);
     void printState();
-    Vector3D getPos();
-    DirectionMatrix getDir();
-    Vector3D getHeading();
-    Vector3D getLeft();
-    Vector3D getUp();
+    vec3 getPosition();
+    vec3 getHeading();
+    vec3 getLeft();
+    vec3 getUp();
     void roll(GLfloat angle);
     void yaw(GLfloat angle);
     void pitch(GLfloat angle);
-    vector<Vector3D> draw2D(vector<Symbol>);
-    vector<Vector3D> draw3D(vector<Symbol>);
-
+    vector<vec3> draw3D(vector<Symbol>);
 };
 
+vec3 round(vec3 v);
+vector<vec3> cylinderVertices (vec3 centre1, vec3 centre2, vec3 axis, vec3 normal, GLfloat radius);
 #endif /* Turtle_hpp */
 
 
