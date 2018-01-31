@@ -43,6 +43,10 @@ public:
     void setHeading (GLfloat xpos, GLfloat ypos, GLfloat zpos);
     void setLeft (GLfloat xpos, GLfloat ypos, GLfloat zpos);
     void setUp (GLfloat xpos, GLfloat ypos, GLfloat zpos);
+    void setPosition (vec3 p);
+    void setHeading (vec3 h);
+    void setLeft (vec3 l);
+    void setUp (vec3 u);
     void forward(GLfloat step);
     void printState();
     vec3 getPosition();

@@ -48,6 +48,18 @@ void Turtle::setUp (GLfloat xpos, GLfloat ypos, GLfloat zpos) {
 void Turtle::setLeft (GLfloat xpos, GLfloat ypos, GLfloat zpos){
     left = vec3(xpos, ypos, zpos);
 }
+void Turtle::setPosition (vec3 p){
+    position = p;
+};
+void Turtle::setHeading (vec3 h){
+    heading = h;
+};
+void Turtle::setLeft (vec3 l){
+    left = l;
+};
+void Turtle::setUp (vec3 u){
+    up = u;
+};
 vec3 Turtle::getPosition() {
     return position;
 }
