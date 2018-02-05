@@ -25,12 +25,15 @@ class Rule {
 public:
     Symbol input;
     vector<Symbol> output;
+    string condition;
     bool parametric;
     bool isApplicable(Symbol input);
-    Rule(Symbol input);
+    //input symbol must have single variables or numbers
+    //output symbols may have expressions using those variables in their parameters
+    Rule(Symbol input, string condition, vector<Symbol> output);
     Rule(Symbol input, vector<Symbol> output);
     vector<Symbol> apply(Symbol input);
     void printState();
 };
-
+vector<string> replaceParam(vector<string> &parameters, string variable, string value);
 #endif /* Rule_hpp */

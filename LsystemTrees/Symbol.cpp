@@ -10,6 +10,8 @@
 #include "Symbol.hpp"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include "Parser.hpp"
+#include "boost/algorithm/string/replace.hpp"
 
 // standard C++ libraries
 #include <cassert>
@@ -24,33 +26,40 @@ using namespace std;
 
 Symbol::Symbol(char l, string p) {
     letter = l;
-    parameters = p;
+    parameters = parseParameters(p);
 }
 Symbol::Symbol(char l){
     letter = l;
-    parameters = "";
-}
-Symbol::Symbol(){
-    letter = ' ';
-    parameters = "";
 }
 void Symbol::printState(){
-    
-    cout<<letter;
+    cout<<letter<<" ";
     if(!parameters.empty()) {
-        cout<<parameters;
+        for(vector<string>::iterator it = parameters.begin(); it != parameters.end(); it++) {
+            cout<<*it<<" ";
+        }
     }
 }
 bool Symbol::equals(Symbol s) {
     return (s.letter==letter && s.parameters==parameters);
 }
+void Symbol::evaluateParameters(){
+    //check only numbers
+    vector<string> evaluatedParameters;
+    for(vector<string>::iterator it = parameters.begin(); it != parameters.end(); it++) {
+        evaluatedParameters.push_back(evaluateInfix(*it));
+    }
+    parameters = evaluatedParameters;
+}
 vector<GLfloat> Symbol::getParameters() {
     vector<GLfloat> parameterList;
-    string p = parameters.size()>1 ? parameters.substr(1, parameters.size()-2) : "";
-    stringstream ss(p);
-    string val;
-    while (getline(ss, val, ',')){
-        parameterList.push_back(stof(val));
+    for(vector<string>::iterator it = parameters.begin(); it != parameters.end(); it++) {
+        parameterList.push_back(stof(*it));
     }
-    return parameterList;
+   return parameterList;
+}
+void Symbol::replaceParameters(string variable, string value) {
+    vector<string>::iterator itParameters;
+    for (itParameters = parameters.begin(); itParameters != parameters.end(); itParameters++) {
+        boost::replace_all(*itParameters, variable, value);
+    }
 }
