@@ -28,9 +28,11 @@
 #include <vector>
 #include <list>
 #include <stack>
-
+#include <sstream>
+#include <regex>
 #include "Turtle.hpp"
 #include "Symbol.hpp"
+#include "Parser.hpp"
 
 using namespace std;
 
@@ -155,4 +157,52 @@ void TurtleInterpreter::addCylinderVertices (vec3 centre1, vec3 centre2, vec3 ax
     }
     vertices.insert(vertices.end(), cylinderVertices.begin(), cylinderVertices.end());
     colours.insert(colours.end(), cylinderColours.begin(), cylinderColours.end());
+}
+void TurtleInterpreter::printVariables() {
+    cout<<"branchRadius "<<branchRadius<<endl;
+    cout<<"branchStep "<<branchStep<<endl;
+    cout<<"branchAngle "<<branchAngle<<endl;
+    cout<<"branchThicknessRatio "<<branchThicknessRatio<<endl;
+    cout<<"branchStepRatio "<<branchStepRatio<<endl;
+    cout<<"minRadius "<<minRadius<<endl;
+}
+
+void TurtleInterpreter::readVariables(const char * variables_file_path) {
+    ifstream file(variables_file_path);
+    string line;
+    string variable;
+    string val;
+    regex variableAssignment("[a-zA-Z]+\\s*=\\s*(\\d+(\\.\\d+)?)");
+    while (getline(file, line)) {
+        stringstream assignment(line);
+        if (!regex_match(line , variableAssignment)) {
+            cout<<"Invalid assignment "<<line<<endl;
+        }
+        getline(assignment, variable, '=');
+        variable = trim(variable);
+        getline(assignment, val);
+        val = trim(val);
+        GLfloat value = stof(trim(val));
+        if (variable == "branchRadius") {
+            branchRadius = value;
+        }
+        else if (variable == "branchStep") {
+            branchStep = value;
+        }
+        else if (variable == "branchAngle") {
+            branchAngle = value;
+        }
+        else if (variable == "branchThicknessRatio") {
+            branchThicknessRatio = value;
+        }
+        else if (variable == "branchStepRatio") {
+            branchStepRatio = value;
+        }
+        else if (variable == "minRadius") {
+            minRadius = value;
+        }
+        else {
+            cout<<variable<<" is not a variable"<<endl;
+        }
+    }
 }

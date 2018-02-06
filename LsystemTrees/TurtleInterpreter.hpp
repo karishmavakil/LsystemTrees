@@ -60,5 +60,8 @@ public:
     vector<vec3> getColours();
     void refreshTurtle();
     void generateInformation(vector<Symbol> instructions);
+    void printVariables();
+    void readVariables(const char * variables_file_path);
+
 };
 #endif /* TurtleInterpreter_hpp */
