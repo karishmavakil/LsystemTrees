@@ -20,9 +20,9 @@
 #include <sstream>
 using namespace std;
 
-regex num ("\\d+(.\\d+)?");
+regex num ("\\d+(\\.\\d+)?");
 regex variable ("[a-z]");
-regex parameterList ("[{][^[\\]{}]+[}]");
+regex parameterList ("[{][^\\[\\]{}]+[}]");
 //regex op ("[+|-|*|/]");
 
 
@@ -36,13 +36,12 @@ bool isVariable(string a) {
     return regex_match(a, variable);
 }
 bool isBracket(string b) {
-    return (b == "(" || b ==")");
+    return (b == "(" || b == ")");
 }
 string trim(string str) {
     size_t first = str.find_first_not_of(' ');
-    if (string::npos == first)
-    {
-        return str;
+    if (string::npos == first) {
+        return "";
     }
     size_t last = str.find_last_not_of(' ');
     return str.substr(first, (last - first + 1));
@@ -64,19 +63,19 @@ int getOperatorWeight(string op)
 
 bool hasHigherPrecedence(string op1, string op2) {
     if (!isOperator(op1) || !isOperator(op2)){
-        cout<<"Invalid input"<<endl;
+        cout<<"Invalid input "<<op1<<" "<<op2<<endl;
     }
     return getOperatorWeight(op1) >= getOperatorWeight(op2);
 }
 
 string toPostfix(string expression) {
-    stringstream exp(expression);
+    stringstream exp(trim(expression));
     string el;
     stack<string> expStack;
     string postfixExpression = "";
     while (getline(exp, el, ' ')) {
         if(!isNumber(el) && !isVariable(el) && !isOperator(el) && !isBracket(el)) {
-            cout<<"Invalid token encountered "<<endl;
+            cout<<"Invalid token encountered "<<el<<endl;
             break;
         }
         if (isNumber(el)) {
@@ -108,12 +107,12 @@ string toPostfix(string expression) {
         expStack.pop();
         postfixExpression+=" ";
     }
-    cout<<"post fix "<<postfixExpression<<endl;
+//    cout<<"post fix "<<postfixExpression<<endl;
     return trim(postfixExpression);
 }
 string eval(string a1, string op, string b1) {
     if (!isOperator(op)) {
-        cout<<"Invalid operator";
+        cout<<"Invalid operator "<<op<<endl;
     }
     float a = stof(a1);
     float b = stof(b1);
@@ -175,10 +174,14 @@ string evaluateInfix(string infixExpression) {
     string postfix = toPostfix(infixExpression);
     return evaluatePostfix(postfix);
 }
+//enter a comma separated list of parameters enclosed in {} without any brackets like [, ]
 vector<string> parseParameters(string param) {
     vector<string> paramList;
+    if (param.empty()){
+        return paramList;
+    }
     if(!regex_match(param, parameterList)) {
-        cout<<"Invalid parameter list"<<endl;
+        cout<<"Invalid parameter list "<<param<<endl;
         return paramList;
     }
     string p = param.size()>1 ? param.substr(1, param.size()-2) : "";
@@ -187,10 +190,10 @@ vector<string> parseParameters(string param) {
     while (getline(ss, val, ',')){
         paramList.push_back(trim(val));
     }
-    cout<<"Vector of strings"<<endl;
-    for (vector<string>::iterator it = paramList.begin(); it != paramList.end(); it++) {
-        cout<<"\""<<*it<<"\""<<endl;
-    }
+//    cout<<"Vector of strings"<<endl;
+//    for (vector<string>::iterator it = paramList.begin(); it != paramList.end(); it++) {
+//        cout<<"\""<<*it<<"\""<<endl;
+//    }
     return paramList;
 }
 
