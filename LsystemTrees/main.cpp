@@ -11,19 +11,25 @@
 // standard C++ libraries
 #include <cassert>
 #include <iostream>
+#include <sstream>
+
 #include <stdexcept>
 #include <cmath>
 #include <vector>
 #include <list>
 #include <fstream>
 #include <cstdlib>
-
+#include <regex>
 
 #include "Window.hpp"
 #include "Shaders.hpp"
 #include "Turtle.hpp"
 #include "Reader.hpp"
 #include "Tests.hpp"
+#include "TurtleInterpreter.hpp"
+#include "Controls.hpp"
+#include "Parser.hpp"
+
 
 using namespace std;
 
@@ -34,52 +40,54 @@ using namespace std;
 
 using namespace glm;
 
+
 int testGraphics() {
     
     GLFWwindow *window = createWindow();
     
-    GLuint shaderProgram = LoadShaders("/Users/karishmavakil/Documents/Project/LSystemTrees/LSystemTrees/vert.shader", "/Users/karishmavakil/Documents/Project/LSystemTrees/LSystemTrees/frag.shader");
+    GLuint shaderProgram = loadShaders("/Users/karishmavakil/Documents/Project/LSystemTrees/LSystemTrees/vert.shader", "/Users/karishmavakil/Documents/Project/LSystemTrees/LSystemTrees/frag.shader");
         
     // Get a handle for our "MVP" uniform
     GLuint MatrixID = glGetUniformLocation(shaderProgram, "MVP");
-    // Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-    mat4 Projection = perspective(radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
-    // Camera matrix
-    mat4 View = lookAt(
-                                 vec3(0,1,15), // Camera is at (4,3,3), in World Space
-                                 vec3(0,0,0), // and looks at the origin
-                                 vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
-                                );
-    // Model matrix : an identity matrix (model will be at the origin)
-    mat4 Model      = mat4(1.0f);
-   //mat4 Model = translate(mat4(), vec3(0.4f, 0.6f, 0.0f));
-    mat4 MVP        = Projection * View * Model;
+//    // Camera matrix
+//    mat4 View = lookAt(
+//                                 vec3(5,-2,15), // Camera is at (4,3,3), in World Space
+//                                 vec3(0,0,0), // and looks at the origin
+//                                 vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
+//                                );
+//    // Model matrix : an identity matrix (model will be at the origin)
+    mat4 ModelMatrix      = mat4(1.0f);
+    mat4 ProjectionMatrix = perspective(radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
 
-    
     GLfloat vertices[1000000] = {};
-    GLfloat colors[1000000] = {};
+    GLfloat colours[1000000] = {};
 
     Turtle turtle = Turtle();
     turtle.setPosition(0.0f, -6.0f, 0.0f);
+    
+    
     LSystem tree = createLsystem("/Users/karishmavakil/Documents/Project/LSystemTrees/LSystemTrees/tree.txt");
-    tree.applyRules(2);
-    vector<vec3> vert = turtle.draw3D(tree.current);
-    int i = 0 ;
-    for (vector<vec3>::iterator it = vert.begin(); it != vert.end(); it++){
-        vertices[i] = it->x;
-        vertices[i+1] = it->y;
-        vertices[i+2] = it->z;
-        if (i%2==0){
-            colors[i] = 0.0f;
-            colors[i+1] = 0.8f;
-            colors[i+2] = 0.0f;
-        }
-        else {
-            colors[i] = 0.0f;
-            colors[i+1] = 0.5f;
-            colors[i+2] = 0.2f;
-        }
-        i+=3;
+    tree.applyRules(4);
+    
+    
+    TurtleInterpreter interpreter = TurtleInterpreter(turtle);
+    interpreter.readVariables("/Users/karishmavakil/Documents/Project/LSystemTrees/LSystemTrees/turtleinterpreter.txt");
+    interpreter.printVariables();
+
+    interpreter.generateInformation(tree.current);
+    
+    vector<vec3> vert = interpreter.getVertices();
+    vector<vec3> col = interpreter.getColours();
+    int i = 0;
+    vector<vec3>::iterator itV;
+    vector<vec3>::iterator itC;
+    for (itV = vert.begin(), itC = col.begin(); itV != vert.end() || itC != col.end(); itV++, itC++, i++){
+        vertices[3*i] = itV->x;
+        vertices[3*i+1] = itV->y;
+        vertices[3*i+2] = itV->z;
+        colours[3*i] = itC->x;
+        colours[3*i+1] = itC->y;
+        colours[3*i+2] = itC->z;
     }
     
     GLuint vertexbuffer, VAO;
@@ -96,27 +104,34 @@ int testGraphics() {
     glEnableVertexAttribArray(0);
     glBindBuffer( GL_ARRAY_BUFFER, 0);
 
-    GLuint colorbuffer;
-    glGenBuffers(1, &colorbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+    GLuint colourbuffer;
+    glGenBuffers(1, &colourbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, colourbuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(colours), colours, GL_STATIC_DRAW);
     glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, colourbuffer);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
         
     
     glBindVertexArray( 0 );
-    
-    while ((!glfwWindowShouldClose(window))) {
+    glfwPollEvents();
+
+    while ((!glfwWindowShouldClose(window)) && glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS) {
         
         // Enable depth test
         glEnable(GL_DEPTH_TEST);
         // Accept fragment if it closer to the camera than the former one
 
         glDepthFunc(GL_LESS);
+
         glfwPollEvents();
         glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
         glClear( GL_COLOR_BUFFER_BIT |  GL_DEPTH_BUFFER_BIT);
+        // Compute the MVP matrix from keyboard and mouse input
+        computeMatricesFromInputs(window);
+        mat4 ViewMatrix = getViewMatrix();
+        mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+
         
         glUseProgram( shaderProgram );
         
@@ -125,15 +140,17 @@ int testGraphics() {
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
         
         glBindVertexArray( VAO );
-        glDrawArrays(GL_TRIANGLES, 0, 50000);
+        glDrawArrays(interpreter.drawingMode, 0, 50000);
         glBindVertexArray(0);
         
         glfwSwapBuffers(window);
+        glfwPollEvents();
+
         
     }
     glDeleteVertexArrays(1, &VAO);
     glDeleteVertexArrays(1, &vertexbuffer);
-    glDeleteVertexArrays(1, &colorbuffer);
+    glDeleteVertexArrays(1, &colourbuffer);
 
     glfwTerminate();
 
@@ -143,11 +160,16 @@ int testGraphics() {
 int main () {
 //    testTurtle();
 //    testSymbol();
+//    testRule();
 //    testList();
 //    testLSystem();
+//    testParametersLSystem();
     testGraphics();
+//    testRegexes();
 //    testD0LSystemTurtle();
-//    testReader();    
+//    testReader();
+//    testParser();
+//    testInterpreter();
 }
 
 
