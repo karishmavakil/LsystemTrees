@@ -28,8 +28,11 @@ Symbol::Symbol(char l, string p) {
     letter = l;
     parameters = parseParameters(p);
 }
-Symbol::Symbol(char l){
+Symbol::Symbol(char l) {
     letter = l;
+}
+Symbol::Symbol() {
+    letter = ' ';
 }
 void Symbol::printState(){
     cout<<letter<<" ";
@@ -43,7 +46,7 @@ bool Symbol::equals(Symbol s) {
     return (s.letter==letter && s.parameters==parameters);
 }
 void Symbol::evaluateParameters(){
-    //check only numbers
+    //check only numbers - is checked in evaluateInfix
     vector<string> evaluatedParameters;
     for(vector<string>::iterator it = parameters.begin(); it != parameters.end(); it++) {
         evaluatedParameters.push_back(evaluateInfix(*it));

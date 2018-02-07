@@ -33,6 +33,7 @@ public:
     vector<string> parameters;
     Symbol(char l, string p);
     Symbol(char l);
+    Symbol();
     void printState();
     bool equals(Symbol);
     void evaluateParameters();
