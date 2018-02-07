@@ -38,7 +38,7 @@ bool Rule::isApplicable(Symbol in){
                 boost::replace_all(con, *it, *itValue);
             }
         }
-        if (con != "") {
+        if (conditional) {
             //make evaluating conditions more sophisticated
             //check conditions only have numbers no variables
             matches = matches && evaluateInfix(con) == "1";
@@ -54,9 +54,11 @@ vector<Symbol> Rule::apply(Symbol in){
         if (isVariable(*itVar)){
             for (itOut = out.begin(); itOut != out.end(); itOut++) {
                 itOut->replaceParameters(*itVar, *itValue);
-                itOut -> evaluateParameters();
             }
         }
+    }
+    for (itOut = out.begin(); itOut != out.end(); itOut++) {
+        itOut -> evaluateParameters();
     }
     return out;
 }
