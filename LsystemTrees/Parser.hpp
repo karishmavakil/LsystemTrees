@@ -36,6 +36,8 @@ string evaluatePostfix(string postfixExpression);
 string evaluateInfix(string infixExpression);
 vector<string> parseParameters(string param);
 string trim(string str);
+bool evaluateCondition(string infix);
+
 
 
 

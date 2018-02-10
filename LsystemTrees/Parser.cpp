@@ -30,7 +30,7 @@ bool isNumber(string s) {
     return regex_match(s, num);
 }
 bool isOperator(string s) {
-    return (s=="+"||s=="-"||s=="*"||s=="/"||s=="=="||s=="<"||s==">");
+    return (s=="+"||s=="-"||s=="*"||s=="/"||s=="=="||s=="<"||s==">"||s=="||"||s=="&&");
 }
 bool isVariable(string a) {
     return regex_match(a, variable);
@@ -63,6 +63,9 @@ int getOperatorWeight(string op)
     }
     else if (op=="==" | op==">" | op=="<") {
         weight = 30;
+    }
+    else if (op=="||" | op=="&&") {
+        weight = 20;
     }
     return weight;
 }
@@ -158,6 +161,12 @@ string eval(string a1, string op, string b1) {
     else if (op=="<") {
         ans = to_string(a < b);
     }
+    else if (op=="&&") {
+        ans = (a==1 && b==1) ? "1" : "0";
+    }
+    else if (op=="||") {
+        ans = (a==1 || b==1) ? "1" : "0";
+    }
     return ans;
 }
 //return evaluated postfix expression - could be a number or 0 or 1 if boolean
@@ -229,4 +238,12 @@ vector<string> parseParameters(string param) {
     }
     return paramList;
 }
-
+//evaluate an infix condition
+bool evaluateCondition(string infix) {
+    //bit hacky
+    if (infix.find('>') == string::npos && infix.find('<') == string::npos && infix.find('=') == string::npos) {
+        cout<<"Invalid Condition: ";
+        return false;
+    }
+    else return evaluateInfix(infix)== "1" ? true : false;
+}
