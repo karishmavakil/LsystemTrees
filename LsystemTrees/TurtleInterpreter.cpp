@@ -33,20 +33,23 @@
 #include "Turtle.hpp"
 #include "Symbol.hpp"
 #include "Parser.hpp"
+#include "Lsystem.hpp"
 
 using namespace std;
 
-TurtleInterpreter::TurtleInterpreter(Turtle t){
+TurtleInterpreter::TurtleInterpreter(Turtle t, LSystem l){
     turtle = t;
+    lsystem = l;
     branchRadius = 0.08f;
     branchStep = 0.4f;
     branchAngle = 0.6f;
     branchThicknessRatio = 0.87;
     branchStepRatio = 0.85;
     minRadius = 0.03;
+    iterations = 5;
 };
 vector<Symbol> TurtleInterpreter::getInstructions(){
-    return instructions;
+    return lsystem.current;
 };
 vector<vec3> TurtleInterpreter::getVertices(){
     return vertices;
@@ -54,11 +57,16 @@ vector<vec3> TurtleInterpreter::getVertices(){
 vector<vec3> TurtleInterpreter::getColours(){
     return colours;
 };
+LSystem TurtleInterpreter::getLSystem(){
+    return lsystem;
+}
 void TurtleInterpreter::refreshTurtle(){
     turtle = Turtle();
 };
-void TurtleInterpreter::generateInformation(vector<Symbol> instr){
-    instructions = instr;
+void TurtleInterpreter::generateInformation(){
+    lsystem.clear();
+    lsystem.applyRules(iterations);
+    vector<Symbol> instructions = lsystem.current;
     for(vector<Symbol>::iterator itInstr = instructions.begin(); itInstr != instructions.end(); itInstr++) {
         vector<GLfloat> p = itInstr->getParameters();
         vector<vec3> v1;
@@ -165,44 +173,4 @@ void TurtleInterpreter::printVariables() {
     cout<<"branchThicknessRatio "<<branchThicknessRatio<<endl;
     cout<<"branchStepRatio "<<branchStepRatio<<endl;
     cout<<"minRadius "<<minRadius<<endl;
-}
-
-void TurtleInterpreter::readVariables(const char * variables_file_path) {
-    ifstream file(variables_file_path);
-    string line;
-    string variable;
-    string val;
-    regex variableAssignment("[a-zA-Z]+\\s*=\\s*(\\d+(\\.\\d+)?)");
-    while (getline(file, line)) {
-        stringstream assignment(line);
-        if (!regex_match(line , variableAssignment)) {
-            cout<<"Invalid assignment "<<line<<endl;
-        }
-        getline(assignment, variable, '=');
-        variable = trim(variable);
-        getline(assignment, val);
-        val = trim(val);
-        GLfloat value = stof(trim(val));
-        if (variable == "branchRadius") {
-            branchRadius = value;
-        }
-        else if (variable == "branchStep") {
-            branchStep = value;
-        }
-        else if (variable == "branchAngle") {
-            branchAngle = value;
-        }
-        else if (variable == "branchThicknessRatio") {
-            branchThicknessRatio = value;
-        }
-        else if (variable == "branchStepRatio") {
-            branchStepRatio = value;
-        }
-        else if (variable == "minRadius") {
-            minRadius = value;
-        }
-        else {
-            cout<<variable<<" is not a variable"<<endl;
-        }
-    }
 }

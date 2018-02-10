@@ -31,12 +31,13 @@
 
 #include "Turtle.hpp"
 #include "Symbol.hpp"
-
+#include "Lsystem.hpp"
 using namespace std;
 
 class TurtleInterpreter {
     Turtle turtle;
-    vector<Symbol> instructions;
+    LSystem lsystem;
+//    vector<Symbol> instructions;
     vector<vec3> vertices;
     vector<vec3> colours;
     stack<vec3> positionStack;
@@ -53,15 +54,15 @@ public:
     GLfloat branchThicknessRatio = 0.93;
     GLfloat branchStepRatio = 0.95;
     GLfloat minRadius = 0.015;
+    int iterations;
     GLenum drawingMode = GL_TRIANGLES;
-    TurtleInterpreter(Turtle t);
+    TurtleInterpreter(Turtle t, LSystem l);
     vector<Symbol> getInstructions();
     vector<vec3> getVertices();
     vector<vec3> getColours();
+    LSystem getLSystem();
     void refreshTurtle();
-    void generateInformation(vector<Symbol> instructions);
+    void generateInformation();
     void printVariables();
-    void readVariables(const char * variables_file_path);
-
 };
 #endif /* TurtleInterpreter_hpp */
