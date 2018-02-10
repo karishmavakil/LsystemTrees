@@ -32,7 +32,7 @@
 #include "Shaders.hpp"
 #include "Turtle.hpp"
 #include "Symbol.hpp"
-#include "Reader.hpp"
+#include "JSONReader.hpp"
 #include "Tests.hpp"
 #include "TurtleInterpreter.hpp"
 
@@ -113,55 +113,116 @@ void testTurtle(){
 void testSymbol() {
     Symbol s = Symbol('k');
     s.printState();
-    cout<<endl<<" Testing parameters: ";
+    cout<<endl<<"Testing parameters: "<<endl;
     vector<GLfloat> p = s.getParameters();
     if (p.empty()) {
-        cout<<"no parameters ";
+        cout<<"no parameters "<<endl;
     }
     for(vector<GLfloat>::iterator it = p.begin(); it != p.end(); it++){
-        cout<<*it<<" "<<*it+1<<" ";
+        cout<<*it<<" "<<*it+1<<". ";
     }
     string para = "{1.0,2.2,3}";
     Symbol s2 = Symbol('h', para);
     s2.printState();
-    cout<<endl<<" Testing parameters: ";
+    cout<<endl<<"Testing parameters: "<<endl;
     vector<GLfloat> p2 = s2.getParameters();
     for(vector<GLfloat>::iterator it = p2.begin(); it != p2.end(); it++){
-        cout<<*it<<" "<<*it+1<<" ";
+        cout<<*it<<" "<<*it+1<<". ";
     }
+    cout<<endl;
     para = "{1.0 + 5, 2.2 ,3 * ( 2.0 - 1.1 ) }";
     Symbol s3 = Symbol('h', para);
     s3.printState();
     s3.evaluateParameters();
     s3.printState();
-    cout<<endl<<" Testing parameters: ";
+    cout<<endl<<"Testing parameters: "<<endl;
     
     vector<GLfloat> p3 = s3.getParameters();
     for(vector<GLfloat>::iterator it = p3.begin(); it != p3.end(); it++){
-        cout<<*it<<" "<<*it+1<<" ";
+        cout<<*it<<" "<<*it+1<<". ";
     }
-    cout<<s2.equals(s)<<endl;
-    cout<<Symbol('H').equals(s);
-    Symbol('L').printState();
-    
-    cout<<endl<<endl;
-    cout<<"Testing parameter evaluation";
-    Symbol y = Symbol('S', "{1 + 2.0 + 3, 5 * 2.1, 6.2 / 2}");
-    y.evaluateParameters();
-    
-    y.printState();
-    vector<GLfloat> py = y.getParameters();
-    for(vector<GLfloat>::iterator it = py.begin(); it != py.end(); it++){
-        cout<<*it<<" "<<*it+1<<" ";
-    }
-    Symbol z = Symbol('S', "{1 + 2.0 8 + 3, 5 * 2.1, 6.2 / 2}");
-    z.evaluateParameters();
     cout<<endl;
-    cout<<"testing replace variable "<<endl;
+    cout<<s2.equals(s2)<<endl;
+    cout<<Symbol('H').equals(s)<<endl;
+
+    cout<<endl<<endl;
+    cout<<"Testing parameter evaluation and getParameters"<<endl;
+    Symbol y = Symbol('S', "{1 + 2.0 + 3, 5 * 2.1, 6.2 / 2}");
+    y.printState();
+    cout<<endl;
+    y.evaluateParameters();
+    y.printState();
+    cout<<endl;
+    vector<GLfloat> py = y.getParameters();
+    cout<<endl;
+    for(vector<GLfloat>::iterator it = py.begin(); it != py.end(); it++){
+        cout<<*it<<" "<<*it+1<<" . ";
+    }
+    cout<<endl;
+    Symbol z = Symbol('A', "{1 + 2.0 8 + 3, 5 * 2.1, 6.2 / 2}");
+    z.printState();
+    cout<<endl;
+    z.evaluateParameters();
+    z.printState();
+    cout<<endl;
+    vector<GLfloat> pz = z.getParameters();
+    for(vector<GLfloat>::iterator it = pz.begin(); it != pz.end(); it++){
+        cout<<*it<<" "<<*it*2.1<<" . ";
+    }
+    cout<<endl;
+    y = Symbol('[', "{1 + -2.0 + 3, 5 * -2.1, 6.2 / 2}");
+    y.printState();
+    cout<<endl;
+    y.evaluateParameters();
+    y.printState();
+    cout<<endl;
+    py = y.getParameters();
+    for(vector<GLfloat>::iterator it = py.begin(); it != py.end(); it++){
+        cout<<*it<<" "<<*it+1<<" . ";
+    }
+    cout<<endl;
+    z = Symbol('+', "{1 + 2.0, -8 + 3, ( 5 * 2.1 ) + 1, 6.2 / 2}");
+    z.printState();
+    cout<<endl;
+    z.evaluateParameters();
+    z.printState();
+    cout<<endl;
+    pz = z.getParameters();
+    for(vector<GLfloat>::iterator it = pz.begin(); it != pz.end(); it++){
+        cout<<*it<<" "<<*it/0.5<<" . ";
+    }
+    cout<<endl;
+    cout<<"Testing replace variable "<<endl;
     Symbol x = Symbol('X', "{1 + 2.0 + 3, x + 5 * 2.1, 6.2 / 2 - x}");
     x.printState();
+    cout<<endl;
     x.replaceParameters("x", "1.564");
     x.printState();
+    cout<<endl;
+    x = Symbol('X', "{1 + 2.0 + 3, x + 5 * 2.1, 6.2 / 2 - x}");
+    x.printState();
+    cout<<endl;
+    x.replaceParameters("X", "1.564");
+    x.printState();
+    cout<<endl;
+    x = Symbol('X', "{1 + 2.0 + 3, x + 5 * 2.1, 6.2 / 2 - x}");
+    x.printState();
+    cout<<endl;
+    x.replaceParameters("a", "1.564");
+    x.printState();
+    cout<<endl;
+    x = Symbol('X', "{1 + -2.0 + y, x + 5 * -2.1, 6.2 / z - x}");
+    x.printState();
+    cout<<endl;
+    x.replaceParameters("x", "1.564");
+    x.printState();
+    cout<<endl;
+    x.replaceParameters("y", "0");
+    x.printState();
+    cout<<endl;
+    x.replaceParameters("z", "4.3");
+    x.printState();
+    cout<<endl;
 
 }
 void testList(){
@@ -187,10 +248,11 @@ void testLSystem(){
     rule2.printState();
     cout<<endl;
     output.clear();
-//    output.push_back('D');
-//    output.push_back('B');
-//    output.push_back('D');
+    output.push_back(Symbol('D'));
+    output.push_back(Symbol('B'));
+    output.push_back(Symbol('D'));
     Rule rule3 = Rule(Symbol('C'), output);
+    rule3.printState();
     vector<Rule> rules = vector<Rule>();
     rules.push_back(rule1);
     rules.push_back(rule2);
@@ -211,14 +273,17 @@ void testLSystem(){
     rules.clear();
     rules.push_back(Rule(Symbol('A'), output));
     output.clear();
-    output.push_back('A');
-    output.push_back('B');
-    output.push_back('A');
+    output.push_back(Symbol('A'));
+    output.push_back(Symbol('B'));
+    output.push_back(Symbol('A'));
     rules.push_back(Rule(Symbol('B'), output));
     LSystem d0l2 = LSystem('B', rules);
     d0l2.applyRules(5);
+    d0l2.clear();
+    d0l2.applyRules();
     
 }
+//not using this currently
 vector<Symbol> testD0LSystemTurtle() {
     vector<Symbol> output = vector<Symbol>();
     Symbol s = Symbol('F');
@@ -304,12 +369,11 @@ vector<Symbol> testTree() {
     return d0l.current;
 }
 
-void testReader(){
-    LSystem d0l = createLsystem("/Users/karishmavakil/Documents/Project/LSystemTrees/LSystemTrees/lsystem1.txt");
+void testJSONReader(){
+    TurtleInterpreter interpreter = createInterpreter("/Users/karishmavakil/Documents/Project/LSystemTrees/LSystemTrees/file.json");
     cout<<"Current ";
-    d0l.printCurrent();
-    cout<<endl;
-    d0l.applyRules(5);
+    interpreter.generateInformation();
+    interpreter.printVariables();;
 }
 
 void testNewTurtle() {
@@ -343,7 +407,6 @@ void testParser(){
     
     cout<<endl;
     cout<<endl;
-    toPostfix("( 1 + 2 ) * 3 + 4 - 6 / 2");
     cout<<endl;
     cout<<(toPostfix("5.2 + 4.7 - 5.3 / 6 * 3 / 2 + 45.0 ")=="5.2 4.7 + 5.3 6 / 3 * 2 / - 45.0 +")<<endl;
     cout<<(toPostfix("( 4 - 5 ) * 1.0 / 4.5 - 6.7 / ( 2 - 4 ) ")=="4 5 - 1.0 * 4.5 / 6.7 2 4 - / -")<<endl;
@@ -356,41 +419,66 @@ void testParser(){
     exp = toPostfix("( 4 - 5 ) * 1.0 / 4.5 - 6.7 / ( 2 - 4 )");
     
     cout<<evaluatePostfix(exp)<<endl;
-    exp = toPostfix("1 - 2 - 3 - 4 * ( 6 - 2 - 6.5 ) > 2.2 / ( 5 - 5 - 1 )");
-    cout<<"1 - 2 - 3 - 4 * ( 6 - 2 - 6.5 ) > 2.2 / ( 5 - 5 - 1 )";
-    cout<<evaluatePostfix(exp)<<endl;
     
-    exp = toPostfix("1 - 2 - 3 - 4 * ( 6 - 2 - 6.5 ) + 6 == 0.0 * 2.2 / ( 5 - 5 - 1 )");
-    cout<<"1 - 2 - 3 - 4 * ( 6 - 2 - 6.5 ) + 6 == 0.0 * 2.2 / ( 5 - 5 - 1 )";
-    cout<<evaluatePostfix(exp)<<endl;
-    exp = toPostfix("1 == 1 ");
-    cout<<"1 == 1 ";
-    cout<<evaluatePostfix(exp)<<endl;
-    exp = toPostfix("2 + 3 == 5");
-    cout<<"2 + 3 == 5";
-    cout<<evaluatePostfix(exp)<<endl;
-    exp = toPostfix("4 * 1 == 4 / 1");
-    cout<<"4 * 1 == 4 / 1";
-    cout<<evaluatePostfix(exp)<<endl;
-    exp = toPostfix("1.3 > 8.2");
-    cout<<"1.3 > 8.2";
-    cout<<evaluatePostfix(exp)<<endl;
-    exp = toPostfix("1.6 * 9.0 < 9");
-    cout<<"1.6 * 9.0 < 9";
-    cout<<evaluatePostfix(exp)<<endl;
-    exp = toPostfix("1.4 * 9 > 8.435");
-    cout<<"1.4 * 9 > 8.435";
-    cout<<evaluatePostfix(exp)<<endl;
-    cout<<"Testing evaluate infix";
+    cout<<"Testing evaluateCondition"<<endl;
+    exp = "1 - 2 - 3 - 4 * ( 6 - 2 - 6.5 ) > 2.2 / ( 5 - 5 - 1 )";
+    cout<<"1 - 2 - 3 - 4 * ( 6 - 2 - 6.5 ) > 2.2 / ( 5 - 5 - 1 ) True";
+    cout<<evaluateCondition(exp)<<endl;
+    
+    exp = "1 - 2 - 3 - 4 * ( 6 - 2 - 6.5 ) + 6 == 0.0 * 2.2 / ( 5 - 5 - 1 )";
+    cout<<"1 - 2 - 3 - 4 * ( 6 - 2 - 6.5 ) + 6 == 0.0 * 2.2 / ( 5 - 5 - 1 ) False";
+    cout<<evaluateCondition(exp)<<endl;
+    exp = "1 == 1 ";
+    cout<<"1 == 1 True";
+    cout<<evaluateCondition(exp)<<endl;
+    exp = "2 + 3 == 5";
+    cout<<"2 + 3 == 5 True ";
+    cout<<evaluateCondition(exp)<<endl;
+    exp = "4 * 1 == 4 / 1 ";
+    cout<<"4 * 1 == 4 / 1 True ";
+    cout<<evaluateCondition(exp)<<endl;
+    exp = "1.3  > 8.2";
+    cout<<"1.3 > 8.2  False ";
+    cout<<evaluateCondition(exp)<<endl;
+    exp = "1.6 * 9.0 < 9   ";
+    cout<<"1.6 * 9.0 < 9  False ";
+    cout<<evaluateCondition(exp)<<endl;
+    exp = " 1.4 * 9 > 8.435";
+    cout<<"1.4 * 9 > 8.435  True ";
+    cout<<evaluateCondition(exp)<<endl;
+    exp = " 1.4 * 9 > 8.435  && 1 == 1";
+    cout<<"1.4 * 9 > 8.435   && 1 == 1 True ";
+    cout<<evaluateCondition(exp)<<endl;
+    exp = " 1.4 * 9 > 8.435 && ( 2 == 1 ) ";
+    cout<<"1.4 * 9 > 8.435  && ( 2 == 1 ) False ";
+    cout<<evaluateCondition(exp)<<endl;
+    exp = "1.4 * 9 < 8.435 || 3 > 2";
+    cout<<"1.4 * 9 < 8.435 || 3 > 2 True ";
+    cout<<evaluateCondition(exp)<<endl;
+    exp = "1.4 * 9 < 8.435 || 3 > 2 + 4";
+    cout<<"1.4 * 9 < 8.435 || 3 > 2 + 4 False ";
+    cout<<evaluateCondition(exp)<<endl;
+    exp = "1.4 * 9 + 8.435 || 3 - 2";
+    cout<<"1.4 * 9 + 8.435 || 3 - 2";
+    cout<<evaluateCondition(exp)<<endl;
+    
+    
+    cout<<"Testing evaluate infix"<<endl;
     
     cout<<"2 + 3 * 6 * 5 / 6 + ( 4 - 3 ) - ( 7 - 1 ) : "<<evaluateInfix("2 + 3 * 6 * 5 / 6 + ( 4 - 3 ) - ( 7 - 1 )")<<endl;
     cout<<"2.000001 + 3 * 6 - 5 / 6.3 + ( 4 / 3 ) - ( 7 + 1 ) : "<<evaluateInfix("2.000001 + 3 * 6 - 5 / 6.3 + ( 4 / 3 ) - ( 7 + 1 )")<<endl;
     cout<<"2 + ( 3 * 6 ) * 5.1 / ( 6 + ( 4 * 3 ) ): "<<evaluateInfix("2 + ( 3 * 6 ) * 5.1 / ( 6 + ( 4 * 3 ) )")<<endl;
     cout<<"( 2 + 3 ) * 6 * 5.0 / 6 + ( 7.345 - 1.34 ) : "<<evaluateInfix("( 2 + 3 ) * 6 * 5.0 / 6 + ( 7.345 - 1.34 )")<<endl;
-    cout<<"2 + 3 * 6 * 5 / 6 + ( 4 3 ) - ( 7 - 1 ) : "<<evaluateInfix("2 + 3 * 6 * 5 / 6 + ( 4 3 ) - ( 7 - 1 )")<<endl;
-    cout<<"2.000001 + 3 * 6 - 5 / A 6.3 + ( 4 / 3 ) - ( 7 + 1 ) : "<<evaluateInfix("2.000001 + 3 * 6 - 5 A / 6.3 + ( 4 / 3 ) - ( 7 + 1 )")<<endl;
-    cout<<"2 + ( 3 * 6 )) * 5.1 / ( 6 + ( 4 * 3 ) : "<<evaluateInfix("2 + ( 3 * 6 )) * 5.1 / ( 6 + ( 4 * 3 )")<<endl;
-    
+    cout<<"2 + 3 * 6 * 5 / 6 + ( 4 3 ) - ( 7 - 1 ) : error "<<evaluateInfix("2 + 3 * 6 * 5 / 6 + ( 4 3 ) - ( 7 - 1 )")<<endl;
+    cout<<"2.000001 + 3 * 6 - 5 / A 6.3 + ( 4 / 3 ) - ( 7 + 1 ) : error "<<evaluateInfix("2.000001 + 3 * 6 - 5 A / 6.3 + ( 4 / 3 ) - ( 7 + 1 )")<<endl;
+    cout<<"2 + ( 3 * 6 )) * 5.1 / ( 6 + ( 4 * 3 ) : error "<<evaluateInfix("2 + ( 3 * 6 )) * 5.1 / ( 6 + ( 4 * 3 )")<<endl;
+    cout<<"2 + 3 * 6 * 5 / 6 + ( 4 - 3 ) - ( 7 - 1 ) : "<<evaluateInfix("2 + 3 * 6 * 5 / 6 + ( 4 - 3 ) - ( 7 - 1 )")<<endl;
+    cout<<"2.000001 + 3 * -6 - 5 / 6.3 + ( 4 / 3 ) - ( 7 + 1 ) : "<<evaluateInfix("2.000001 + 3 * -6 - 5 / 6.3 + ( 4 / 3 ) - ( 7 + 1 )")<<endl;
+    cout<<"2 + ( 3 * 6 ) * 5.1 / ( 6 + ( 4 * 3 ) ): "<<evaluateInfix("2 + ( 3 * 6 ) * 5.1 / ( 6 + ( 4 * 3 ) )")<<endl;
+    cout<<"( 2 + 3 ) * 6 * -5.0 / 6 + ( 7.345 - 1.34 ) : "<<evaluateInfix("( 2 + 3 ) * 6 * -5.0 / 6 + ( 7.345 - 1.34 )")<<endl;
+    cout<<"2 + 3 * 6 * 5 / 6 + ( 4 + 3 ) - ( 7 - -1 ) : "<<evaluateInfix("2 + 3 * 6 * 5 / 6 + ( 4 + 3 ) - ( 7 - -1 )")<<endl;
+    cout<<"-2.000001 + 3 * 6 - 5 / 6.3 + ( 4 / 3 ) - ( 7 + 1 ) : "<<evaluateInfix("-2.000001 + 3 * 6 - 5 / 6.3 + ( 4 / 3 ) - ( 7 + 1 )")<<endl;
+    cout<<"-2 + ( 3 * -6 ) * 5.1 / ( 6 + ( 4 * 3 ) ): "<<evaluateInfix("-2 + ( 3 * -6 ) * 5.1 / ( 6 + ( 4 * 3 ) )")<<endl;
     
     
     cout<<"Testing trim: "<<endl;
@@ -411,6 +499,9 @@ void testParser(){
     cout<<"isnum 6.45234 "<<isNumber("6.45234")<<endl;
     cout<<"isnum 0.0 "<<isNumber("0.0")<<endl;
     cout<<"isnum . "<<isNumber(".")<<endl;
+    cout<<"isnum -2 "<<isNumber("-2")<<endl;
+    cout<<"isnum -2.345 "<<isNumber("-2.345")<<endl;
+
     cout<<"Testing parseParameters";
     cout<<"{1,0, 2 + 4, x + 7.0 , 2 * 6 , 5 }"<<endl;
     parseParameters("{1,0, 2 + 4, x + 7.0 , 2 * 6 , 5 }");
@@ -418,7 +509,43 @@ void testParser(){
     parseParameters("{1,0, 5 ,2 + 4, ( x + 7.0 ) * 5, 4.55555 , 2 * 6.3 , 5.1 }");
     cout<<"{1,0.0 , a , b,c * 5.245 , 5 }"<<endl;
     parseParameters("{1,0.0 , a , b,c * 5.245 , 5 }");
-    
+    cout<<"Testing eval";
+    cout<<"eval 1 + 2 "<<eval("1", "+", "2")<<endl;
+    cout<<"eval \" 1.00 \" + 2 "<<eval("1.00 ", "+", "2")<<endl;
+    cout<<"eval 1 * -2 "<<eval("1", "*", "-2")<<endl;
+    cout<<"eval 1 $ 2 "<<eval("1", "$", "2")<<endl;
+    cout<<"eval 1 + 5.3453 "<<eval("1", "+", "5.3453")<<endl;
+    cout<<"eval 1 / -5.3453 "<<eval("1", "/", "-5.3453")<<endl;
+    cout<<"eval 1 || 0 "<<eval("1", "||", "0")<<endl;
+    cout<<"eval 1.00 || 0 "<<eval("1.00", "||", "0")<<endl;
+    cout<<"eval 0 || 0 "<<eval("0", "||", "0")<<endl;
+    cout<<"eval 0.00 || 1 "<<eval("0.00", "||", "1")<<endl;
+    cout<<"eval 1 && 1.0 "<<eval("1", "&&", "1.0")<<endl;
+    cout<<"eval 0 && 1.0 "<<eval("0", "&&", "1.0")<<endl;
+    cout<<"eval 1 && 0.0 "<<eval("1", "&&", "0.0")<<endl;
+    cout<<"eval 0 && 0.0 "<<eval("0", "&&", "0.0")<<endl;
+
+    cout<<"Testing getOperatorWeight"<<endl;
+    cout<<"+ :"<<getOperatorWeight("+")<<endl;
+    cout<<"- :"<<getOperatorWeight("-")<<endl;
+    cout<<"& :"<<getOperatorWeight("&")<<endl;
+    cout<<"/ :"<<getOperatorWeight("/")<<endl;
+    cout<<"== :"<<getOperatorWeight("==")<<endl;
+    cout<<"> :"<<getOperatorWeight(">")<<endl;
+    cout<<"&& :"<<getOperatorWeight("&&")<<endl;
+    cout<<"|| :"<<getOperatorWeight("||")<<endl;
+
+    cout<<"Testing contains no variables"<<endl;
+    cout<<containsNoVariables("2 + 3 * 6 * 5 / 6 + ( || 4 - 3 ) - ( 7 - 1 )")<<endl;
+    cout<<containsNoVariables("2.000001 + 3 * 6 - 5 / 6.3 + ( 4 / 3 ) - ( 7 + 1 ) ")<<endl;
+    cout<<containsNoVariables("2 + ( 3 * 6 ) * 5.1 / ( 6 + ( 4 * 3 ) ) ")<<endl;
+    cout<<containsNoVariables("( 2 + 3 ) * 6 * 5.0 / 6 + ( 7.345 - 1.34 ) x ")<<endl;
+    cout<<containsNoVariables("2 + 3 * 6 * 5 / A + ( 4  &&3 ) - ( 7 - 1 )  ")<<endl;
+    cout<<containsNoVariables("2.000001 + 3 * 6 - 5 / A 6.3 + ( 4 // 3 ) - ( 7 + 1 )")<<endl;
+    cout<<containsNoVariables("2 + ( 3 *  >6 )) * 5.1 / ( 6 + ( 4 * 3 ) : error ")<<endl;
+    cout<<containsNoVariables("2 + 3 * 6 * 5 / 6 + ( 4 - 3 ) - ( 7 - 1 ) && 1 == 2")<<endl;
+    cout<<containsNoVariables("2.000001 + 3 * -6 - < 5 / 6.3 + ( 4 / 3 ) - ( 7 + 1 )")<<endl;
+
     
 }
 void testRule() {
@@ -469,15 +596,34 @@ void testRule() {
     cout<<"isApplicable "<<r1.isApplicable(Symbol('F', "{1}"))<<endl;
     cout<<"isApplicable "<<r1.isApplicable(Symbol('F', "{1 3}"))<<endl;
     cout<<endl;
+    r1 = Rule(Symbol('G', "{x, 6.6, y}"), "y == 2.3 && x == 4", output);
+    cout<<"isApplicable "<<r1.isApplicable(Symbol('G', "{4, 6.6, 2.3}"))<<endl;
+    cout<<"isApplicable "<<r1.isApplicable(Symbol('G', "{3, 6.6, 2.33}"))<<endl;
+    cout<<"isApplicable "<<r1.isApplicable(Symbol('G', "{4, 6.6, 2.3000}"))<<endl;
+    cout<<"isApplicable "<<r1.isApplicable(Symbol('G', "{4.00, 6.500000, 2.300}"))<<endl;
+    cout<<endl;
+    r1 = Rule(Symbol('G', "{x, y, z}"), "( y == 2.3 && x > 4 ) || z < 2", output);
+    cout<<"isApplicable "<<r1.isApplicable(Symbol('G', "{3, 2.3, 0.3}"))<<endl;
+    cout<<"isApplicable "<<r1.isApplicable(Symbol('G', "{3, 2.31, 1.33}"))<<endl;
+    cout<<"isApplicable "<<r1.isApplicable(Symbol('G', "{5, 2.3, 2.3000}"))<<endl;
+    cout<<"isApplicable "<<r1.isApplicable(Symbol('G', "{4.01, 2.300000, 2.300}"))<<endl;
     cout<<"Testing applying Rule"<<endl;
     output.push_back(Symbol('D', "{1,3,4}"));
-    output.push_back(Symbol('B', "{( x + 1.5 ) * 2.0, 3, 5.4}"));
+    output.push_back(Symbol('B', "{( x + 1.5 ) * 2.0, y, 5.4 , 0, 0 / x, z + ( x + y + 1 ) }"));
     output.push_back(Symbol('Y'));
-    r1 = Rule(Symbol('G', "{x, 6.6, y}"), "y == 2.3", output);
-    cout<<"isApplicable "<<r1.isApplicable(Symbol('G', "{5.0, 6.6, 2.1}"))<<endl;
-    vector<Symbol> out = r1.apply(Symbol('G', "{5.0, 6.6, 2.1}"));
+    r1 = Rule(Symbol('G', "{x, y, z}"), "( y == 2.3 && x > 4 ) || z < 2", output);
+    cout<<"isApplicable "<<r1.isApplicable(Symbol('G', "{5.0, 2.3, 0.3}"))<<endl;
+    vector<Symbol> out = r1.apply(Symbol('G',  "{5.0, 2.3, 0.3}"));
     for(vector<Symbol>::iterator it = out.begin(); it != out.end(); it++) {
         it->printState();
+        cout<<" ";
+    }
+    cout<<endl;
+    r1 = Rule(Symbol('G', "{x, y, 4}"), "( y == 2.3 && x > 4 ) || x < 2", output);
+    out = r1.apply(Symbol('G',  "{5.0, 2.3, 0.3}"));
+    for(vector<Symbol>::iterator it = out.begin(); it != out.end(); it++) {
+        it->printState();
+        cout<<" ";
     }
 }
 
@@ -487,26 +633,34 @@ void testParametersLSystem() {
     output.push_back(Symbol('F', "{x + 0.5}"));
     
     Rule r1 = Rule(Symbol('F', "{x}"), "x < 9", output);
-    
+    r1.printState();
     vector<Rule> rules = vector<Rule>();
     rules.push_back(r1);
     
     LSystem d0l = LSystem(Symbol('F', "{5.0}"), rules);
     d0l.applyRules(9);
+    d0l.clear();
+    cout<<"Cleared";
+    cout<<"Start "<<endl;
+    d0l.start.printState();
+    d0l.printCurrent();
+    d0l.applyRules();
+
 }
 
 void testInterpreter() {
-    TurtleInterpreter interpreter = TurtleInterpreter(Turtle());
+    TurtleInterpreter interpreter = TurtleInterpreter(Turtle(), LSystem());
     interpreter.printVariables();
-    interpreter.readVariables("/Users/karishmavakil/Documents/Project/LSystemTrees/LSystemTrees/turtleinterpreter.txt");
+    interpreter.generateInformation();
     interpreter.printVariables();
 }
 void testRegexes() {
-    regex number ("\\d+(\\.\\d+)?");
+    regex number ("\\-?\\d+(\\.\\d+)?");
     regex vari ("[a-z]");
     regex parameter ("[{][^\\[\\]{}]+[}]");
     regex symbolExp("([A-Z\\[\\]&\\-^\\\\/\\+])([{][^\\[\\]{}]+[}])?");
-    
+    regex varAss("[a-zA-Z]+\\s*=\\s*(\\d+(\\.\\d+)?)");
+    regex numberExpression ("[0-9+\\-*\\/<>&|=()\\s,.]+");
     string s = "{12323, 5645 ,g}";
     cout<<s<<" "<<regex_match(s, parameter)<<endl;
     s = "{12323, 5645 ,g   })";
@@ -515,7 +669,7 @@ void testRegexes() {
     cout<<s<<" "<<regex_match(s, parameter)<<endl;
     s = "{12323, 56.]2 , 45 ,g   }";
     cout<<s<<" "<<regex_match(s, parameter)<<endl;
-    s = "{12323, 56)45 ,g   }";
+    s = "{-12323, 56)45 ,g   }";
     cout<<s<<" "<<regex_match(s, parameter)<<endl;
     s = "{12323, 56}45 ,g   }";
     cout<<s<<" "<<regex_match(s, parameter)<<endl;
@@ -524,6 +678,17 @@ void testRegexes() {
     s = "0.5345";
     cout<<s<<" "<<regex_match(s, number)<<endl;
     s = "0.534.5";
+    cout<<s<<" "<<regex_match(s, number)<<endl;
+    s = "A";
+    cout<<s<<" "<<regex_match(s, number)<<endl;
+    
+    s = "-0.5345";
+    cout<<s<<" "<<regex_match(s, number)<<endl;
+    s = "-45643";
+    cout<<s<<" "<<regex_match(s, number)<<endl;
+    s = "-1";
+    cout<<s<<" "<<regex_match(s, number)<<endl;
+    s = "-0.534.5";
     cout<<s<<" "<<regex_match(s, number)<<endl;
     s = "A";
     cout<<s<<" "<<regex_match(s, number)<<endl;
@@ -545,7 +710,7 @@ void testRegexes() {
     cout<<s<<" "<<regex_match(s, symbolExp)<<endl;
     s = " ";
     cout<<s<<" "<<regex_match(s, symbolExp)<<endl;
-    s = "F{1, 345, }";
+    s = "F{1, -345, }";
     cout<<s<<" "<<regex_match(s, symbolExp)<<endl;
     s = "t{343, }}";
     cout<<s<<" "<<regex_match(s, symbolExp)<<endl;
@@ -555,7 +720,7 @@ void testRegexes() {
     cout<<s<<" "<<regex_match(s, symbolExp)<<endl;
     s = "F  {2}";
     cout<<s<<" "<<regex_match(s, symbolExp)<<endl;
-    s = "[{1, 345 x + 2}";
+    s = "[{1, 34, -5 * x + 2}";
     cout<<s<<" "<<regex_match(s, symbolExp)<<endl;
     s = "{{sf, fg}";
     cout<<s<<" "<<regex_match(s, symbolExp)<<endl;
@@ -577,6 +742,30 @@ void testRegexes() {
     cout<<s<<" "<<regex_match(s, symbolExp)<<endl;
     s = "\\{rgewg, rtgert, 456345}";
     cout<<s<<" "<<regex_match(s, symbolExp)<<endl;
+    s = "abc  = 0.5";
+    cout<<s<<" "<<regex_match(s, varAss)<<endl;
+    s = "abc  = 5 0.5";
+    cout<<s<<" "<<regex_match(s, varAss)<<endl;
+    s = "ab4c  = 0.5";
+    cout<<s<<" "<<regex_match(s, varAss)<<endl;
+    s = "abc  == 56450.5";
+    cout<<s<<" "<<regex_match(s, varAss)<<endl;
+    s = "abc  = 0 5";
+    cout<<s<<" "<<regex_match(s, varAss)<<endl;
+    s = "a=0.5";
+    cout<<s<<" "<<regex_match(s, varAss)<<endl;
+    s = "123423 + - )( < | ...";
+    cout<<s<<" "<<regex_match(s, numberExpression)<<endl;
+    s = "123&&423 + - )( < | ...";
+    cout<<s<<" "<<regex_match(s, numberExpression)<<endl;
+    s = "1234+23 + - )( < | ...";
+    cout<<s<<" "<<regex_match(s, numberExpression)<<endl;
+    s = "123/ 423 + - )( < | ...";
+    cout<<s<<" "<<regex_match(s, numberExpression)<<endl;
+    s = "12/ 3423 +x - )( < | ...";
+    cout<<s<<" "<<regex_match(s, numberExpression)<<endl;
+    s = "123A423 + - )( < | ...";
+    cout<<s<<" "<<regex_match(s, numberExpression)<<endl;
     
 }
 

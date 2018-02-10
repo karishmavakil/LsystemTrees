@@ -24,7 +24,7 @@
 
 void testTurtle();
 void testSymbol();
-void testReader();
+void testJSONReader();
 void testNewTurtle();
 void testLSystem();
 void testList();
@@ -35,8 +35,5 @@ void testParser();
 void testRule();
 void testInterpreter();
 void testRegexes();
-
-
-
 
 #endif /* Tests_h */
