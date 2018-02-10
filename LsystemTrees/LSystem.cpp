@@ -8,13 +8,22 @@
 
 #include "LSystem.hpp"
 
-LSystem::LSystem(Symbol start, vector<Rule> ruleset) {
+LSystem::LSystem(Symbol s, vector<Rule> ruleset) {
+    start = s;
     current = vector<Symbol>();
-    current.push_back(start);
-    rules = vector<Rule>();
+    current.push_back(s);
     rules = ruleset;
 }
+LSystem::LSystem(){
+
+}
+void LSystem::clear() {
+    //restart from original start
+    current.clear();
+    current.push_back(start);
+}
 void LSystem::printCurrent() {
+    //print each symbol
     for (vector<Symbol>::iterator it = current.begin(); it != current.end(); ++it){
         it->printState();
     }
@@ -29,12 +38,13 @@ void LSystem::applyRules(){
     for (vector<Symbol>::iterator itCur = current.begin(); itCur!= current.end(); itCur++) {
         cout<<"current symbol ";
         itCur->printState();
+        //haven't found it yet
         bool found = false;
         //iterate over all rules
         for(itRul = rules.begin(); itRul!= rules.end(); itRul++) {
             cout<<" rule input ";
             itRul->input.printState();
-            //if you find a rule whose input matches the current Symbol
+            //if you find a rule to which the current Symbol is applicable
             if(itRul->isApplicable(*itCur)){
                 cout<<" matched ";
                 //find the output of the rule

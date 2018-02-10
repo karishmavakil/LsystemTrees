@@ -30,11 +30,13 @@ using namespace std;
 
 class LSystem {
 public:
-//    Symbol start;
+    Symbol start;
 //    vector<Symbol> alphabet;
     vector<Symbol> current;
     vector<Rule> rules;
     LSystem(Symbol current, vector<Rule> rules);
+    LSystem();
+    void clear();
     void applyRules();
     void applyRules(int n);
     void printCurrent();
