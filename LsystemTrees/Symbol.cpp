@@ -44,6 +44,7 @@ void Symbol::printState(){
             }
             cout<<*it;
         }
+        cout<<" ";
     }
 }
 bool Symbol::equals(Symbol s) {
