@@ -370,10 +370,42 @@ vector<Symbol> testTree() {
 }
 
 void testJSONReader(){
-    TurtleInterpreter interpreter = createInterpreter("/Users/karishmavakil/Documents/Project/LSystemTrees/LSystemTrees/file.json");
-    cout<<"Current ";
-    interpreter.generateInformation();
-    interpreter.printVariables();;
+    TurtleInterpreter interpreter = createInterpreter("/Users/karishmavakil/Documents/Project/LSystemTrees/LSystemTrees/tree1.json");
+    LSystem l = interpreter.getLSystem();
+    cout<<"Start"<<endl;
+    l.start.printState();
+    cout<<endl;
+    vector<Rule> rules = l.rules;
+    cout<<"Rules"<<endl;
+    for(vector<Rule>::iterator it = rules.begin(); it != rules.end(); it++){
+        it->printState();
+    }
+    cout<<endl;
+    interpreter.printVariables();
+    interpreter = createInterpreter("/Users/karishmavakil/Documents/Project/LSystemTrees/LSystemTrees/tree2.json");
+    l = interpreter.getLSystem();
+    cout<<"Start"<<endl;
+    l.start.printState();
+    cout<<endl;
+    rules = l.rules;
+    cout<<"Rules"<<endl;
+    for(vector<Rule>::iterator it = rules.begin(); it != rules.end(); it++){
+        it->printState();
+    }
+    cout<<endl;
+    interpreter.printVariables();
+    interpreter = createInterpreter("/Users/karishmavakil/Documents/Project/LSystemTrees/LSystemTrees/tree4.json");
+    l = interpreter.getLSystem();
+    cout<<"Start"<<endl;
+    l.start.printState();
+    cout<<endl;
+    rules = l.rules;
+    cout<<"Rules"<<endl;
+    for(vector<Rule>::iterator it = rules.begin(); it != rules.end(); it++){
+        it->printState();
+    }
+    cout<<endl;
+    interpreter.printVariables();
 }
 
 void testNewTurtle() {
