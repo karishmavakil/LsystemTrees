@@ -1,0 +1,34 @@
+{
+    "branchRadius" : 0.15,
+    "branchStep" : 0.6,
+    "branchAngle" : 0.6,
+    "branchThicknessRatio" : 0.6,
+    "branchStepRatio" : 0.7,
+    "minRadius" : 0.00,
+    "Turtle": {
+        "x": 0,
+        "y": -6,
+        "z": 0
+    },
+    "LSystem": {
+        "Start": "F{6}",
+        "Rules" : [{
+                        "Input" : "F{x}",
+                        "Output" : "[&F{x}][+{x * 2.5}F{x}]",
+                        "Condition" : "x == 4"
+                    },
+                   {
+                        "Input" : "F{x}",
+                        "Output" : "F{x}[/-F{1.1 *  x}][\\&F{x}][+{x * 0.11}F{x}][^/F{x}]",
+                        "Condition" : "x > 4"
+                   }]
+    },
+    "iterations" : 5
+}
+
+
+
+
+
+
+
