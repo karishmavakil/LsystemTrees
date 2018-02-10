@@ -31,6 +31,7 @@ Symbol::Symbol(char l, string p) {
 Symbol::Symbol(char l) {
     letter = l;
 }
+//empty symbol for use in Contexts later
 Symbol::Symbol() {
     letter = ' ';
 }
@@ -38,13 +39,17 @@ void Symbol::printState(){
     cout<<letter<<" ";
     if(!parameters.empty()) {
         for(vector<string>::iterator it = parameters.begin(); it != parameters.end(); it++) {
-            cout<<*it<<" ";
+            if (it!= parameters.begin()) {
+                cout<<", ";
+            }
+            cout<<*it;
         }
     }
 }
 bool Symbol::equals(Symbol s) {
     return (s.letter==letter && s.parameters==parameters);
 }
+//go through all the parameters and evaluate each one - each one will be an infix expression
 void Symbol::evaluateParameters(){
     //check only numbers - is checked in evaluateInfix
     vector<string> evaluatedParameters;
@@ -53,6 +58,7 @@ void Symbol::evaluateParameters(){
     }
     parameters = evaluatedParameters;
 }
+//go through all the parameters - at this point they will all be floats strings - convert them to float type
 vector<GLfloat> Symbol::getParameters() {
     vector<GLfloat> parameterList;
     for(vector<string>::iterator it = parameters.begin(); it != parameters.end(); it++) {
@@ -60,8 +66,13 @@ vector<GLfloat> Symbol::getParameters() {
     }
    return parameterList;
 }
+//replace a variable with a value in all the parameters
+//checks if it is a variable being replaced
 void Symbol::replaceParameters(string variable, string value) {
     vector<string>::iterator itParameters;
+    if (!isVariable(variable)) {
+        cout<<"Can't replace a token that is not a variable "<<endl;
+    }
     for (itParameters = parameters.begin(); itParameters != parameters.end(); itParameters++) {
         boost::replace_all(*itParameters, variable, value);
     }
