@@ -79,7 +79,7 @@ vector<Symbol> Rule::apply(Symbol in){
 void Rule::printState() {
     cout<<"Input ";
     input.printState();
-    cout<<"Condition ";
+    cout<<" Condition ";
     cout<<condition;
     cout<<" "<<"Output ";
     for (vector<Symbol>::iterator it = output.begin(); it != output.end(); ++it){
