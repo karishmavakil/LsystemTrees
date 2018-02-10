@@ -252,11 +252,11 @@ bool evaluateCondition(string infix) {
         return true;
     }
     if (infix.find('>') == string::npos && infix.find('<') == string::npos && infix.find('=') == string::npos) {
-        cout<<"Invalid Condition: "<<endl;
+        cout<<"Invalid Condition: "<<infix<<endl;
         return false;
     }
     if( !containsNoVariables(infix)){
-        cout<<"Condition still contains variables"<<endl;
+        cout<<"Condition cannot be evaluated: "<<infix<<endl;
         return false;
     }
     else return evaluateInfix(infix)== "1" ? true : false;
