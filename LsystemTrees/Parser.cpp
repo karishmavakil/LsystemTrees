@@ -23,8 +23,11 @@ using namespace std;
 regex num ("\\-?\\d+(\\.\\d+)?");
 regex variable ("[a-z]");
 regex parameterList ("[{][^\\[\\]{}]+[}]");
+regex numberExpression ("[0-9+\\-*\\/<>&|=()\\s,.]+");
 //regex op ("[+|-|*|/]");
-
+//good things - very easy to add more operations
+//very forgiving towards extra white spaces
+//evaluates expressions of any complexity
 
 bool isNumber(string s) {
     return regex_match(s, num);
@@ -238,11 +241,22 @@ vector<string> parseParameters(string param) {
     }
     return paramList;
 }
+//check so any expression can def be evaluated
+bool containsNoVariables(string exp) {
+    return regex_match(exp, numberExpression);
+}
 //evaluate an infix condition
 bool evaluateCondition(string infix) {
     //bit hacky
+    if (infix == "") {
+        return true;
+    }
     if (infix.find('>') == string::npos && infix.find('<') == string::npos && infix.find('=') == string::npos) {
-        cout<<"Invalid Condition: ";
+        cout<<"Invalid Condition: "<<endl;
+        return false;
+    }
+    if( !containsNoVariables(infix)){
+        cout<<"Condition still contains variables"<<endl;
         return false;
     }
     else return evaluateInfix(infix)== "1" ? true : false;

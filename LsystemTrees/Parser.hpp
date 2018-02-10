@@ -37,7 +37,7 @@ string evaluateInfix(string infixExpression);
 vector<string> parseParameters(string param);
 string trim(string str);
 bool evaluateCondition(string infix);
-
+bool containsNoVariables(string exp);
 
 
 
