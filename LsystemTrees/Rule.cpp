@@ -23,15 +23,26 @@ Rule::Rule(Symbol in, vector<Symbol> out) : input(in){
     condition = "";
     output = out;
 }
+//checks is rule can be applied to this Symbol in
+//first checks letters match and no of parameters are equal
+//then iterate through individual parameters
+//if input is a variable, shouldn't work
+//if input and in both have numbers check they are equal
+//if input has variable replace it in the in condition
+//at the end evaluate the condition
 bool Rule::isApplicable(Symbol in){
+    //check letters match and
     bool matches = in.letter == input.letter && in.parameters.size() == input.parameters.size();
-    //add check that in.parameters dont have variables?
     string con = condition;
     bool conditional = !condition.empty();
     if (matches) {
         vector<string>::iterator itValue;
         for(vector<string>::iterator it = input.parameters.begin(), itValue = in.parameters.begin(); it != input.parameters.end() && matches; it++, itValue++) {
-            if (! isVariable(*it)){
+            if (!isNumber(*itValue)) {
+                cout<<"Input Parameter is not a number";
+                break;
+            }
+            if (!isVariable(*it)){
                 matches = matches && (stof(*it) == stof(*itValue));
             }
             else if (conditional) {
@@ -39,13 +50,16 @@ bool Rule::isApplicable(Symbol in){
             }
         }
         if (conditional) {
-            //make evaluating conditions more sophisticated
-            //check conditions only have numbers no variables
-            matches = matches && evaluateInfix(con) == "1";
+            matches = matches && evaluateCondition(con);
         }
     }
     return matches;
 }
+//apply the rule - basically just calculate output
+//we know now that symbols match, just need to replace variables in output if there are any
+//compare parameters again - if there is a variable to be replaced, iterate through output and replace variable with value in each output symbol
+//after this is done iterate through output symbols and evaluate parameters for each symbol
+//returns the output
 vector<Symbol> Rule::apply(Symbol in){
     vector<string>::iterator itValue;
     vector<Symbol> out = output;
