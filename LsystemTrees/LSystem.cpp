@@ -36,17 +36,17 @@ void LSystem::applyRules(){
     vector<Symbol> updated = vector<Symbol>();
     //iterate through current vector of symbols
     for (vector<Symbol>::iterator itCur = current.begin(); itCur!= current.end(); itCur++) {
-        cout<<"current symbol ";
+//        cout<<"current symbol ";
         itCur->printState();
         //haven't found it yet
         bool found = false;
         //iterate over all rules
         for(itRul = rules.begin(); itRul!= rules.end(); itRul++) {
-            cout<<" rule input ";
+//            cout<<" rule input ";
             itRul->input.printState();
             //if you find a rule to which the current Symbol is applicable
             if(itRul->isApplicable(*itCur)){
-                cout<<" matched ";
+//                cout<<" matched ";
                 //find the output of the rule
                 vector<Symbol> out = itRul->apply(*itCur);
                 //insert it in updated
@@ -59,11 +59,11 @@ void LSystem::applyRules(){
         // went through all rules, none applied, so we keep the symbol the same
         if (!found)
             updated.push_back(*itCur);
-        cout<<endl;
+//        cout<<endl;
     }
     current = updated;
-    cout<<endl<<"Updated ";
-    printCurrent();
+//    cout<<endl<<"Updated ";
+//    printCurrent();
 }
 void LSystem::applyRules(int n) {
     for (int i =0; i < n; i++) {
