@@ -22,7 +22,6 @@
 #include <regex>
 #include <sstream>
 
-
 using namespace std;
 
 bool isNumber(string s);
@@ -32,7 +31,7 @@ bool isBracket(string s);
 int getOperatorWeight(string op);
 bool hasHigherPrecedence(string op1, string op2);
 string toPostfix(string infixExpression);
-string eval(float a, string op, float b);
+string eval(string a, string op, string b);
 string evaluatePostfix(string postfixExpression);
 string evaluateInfix(string infixExpression);
 vector<string> parseParameters(string param);

@@ -20,7 +20,7 @@
 #include <sstream>
 using namespace std;
 
-regex num ("\\d+(\\.\\d+)?");
+regex num ("\\-?\\d+(\\.\\d+)?");
 regex variable ("[a-z]");
 regex parameterList ("[{][^\\[\\]{}]+[}]");
 //regex op ("[+|-|*|/]");
@@ -38,16 +38,22 @@ bool isVariable(string a) {
 bool isBracket(string b) {
     return (b == "(" || b == ")");
 }
+//removes white space from front and back on a string
 string trim(string str) {
+    //find the first not space position
     size_t first = str.find_first_not_of(' ');
     if (string::npos == first) {
+    //if that's then end then the whole string is just spaces so clear the string completely
         return "";
     }
+    //find the last not space position
     size_t last = str.find_last_not_of(' ');
+    //from first, get the last - first + 1 characters so [first...last]
     return str.substr(first, (last - first + 1));
 }
 int getOperatorWeight(string op)
 {
+    //valid operator check is done when it is used so not doing it inside
     int weight = -1;
     if (op=="*" | op=="/") {
         weight =50;
@@ -68,44 +74,50 @@ bool hasHigherPrecedence(string op1, string op2) {
     return getOperatorWeight(op1) >= getOperatorWeight(op2);
 }
 
+//converts infix to postfix
+//handles white space trimming of input expression, tokens, returned expression, empty input, invalid token
 string toPostfix(string expression) {
+    //we trim the string
     stringstream exp(trim(expression));
-    string el;
+    string token;
     stack<string> expStack;
+    //updated expression
     string postfixExpression = "";
-    while (getline(exp, el, ' ')) {
+    //space separated strings should be tokens
+    while (getline(exp, token, ' ')) {
         //trimming each token - so any postfix expression will always be formatted correctly
-        el = trim(el);
-        if (el=="") {
+        token = trim(token);
+        if (token=="") {
             continue;
         }
-        if(!isNumber(el) && !isVariable(el) && !isOperator(el) && !isBracket(el)) {
-            cout<<"Invalid token encountered "<<"\""<<el<<"\""<<endl;
+        if(!isNumber(token) && !isVariable(token) && !isOperator(token) && !isBracket(token)) {
+            cout<<"Invalid token encountered "<<"\""<<token<<"\""<<endl;
             break;
         }
-        if (isNumber(el)) {
-            postfixExpression+=el;
+        if (isNumber(token)) {
+            postfixExpression+=token;
             postfixExpression+=" ";
         }
-        else if (isOperator(el)) {
-            while (!expStack.empty() && expStack.top()!="(" && hasHigherPrecedence(expStack.top(), el)) {
+        else if (isOperator(token)) {
+            while (!expStack.empty() && expStack.top()!="(" && hasHigherPrecedence(expStack.top(), token)) {
                 postfixExpression+=expStack.top();
                 postfixExpression+=" ";
                 expStack.pop();
             }
-            expStack.push(el);
+            expStack.push(token);
         }
-        else if (el=="("){
-            expStack.push(el);
+        else if (token=="("){
+            expStack.push(token);
         }
-        else if (el==")"){
+        else if (token==")"){
             while (!expStack.empty() && expStack.top()!="(") {
                 //don't put in the ")"
+                //put in the others until the "("
                 postfixExpression+=expStack.top();
                 postfixExpression+=" ";
                 expStack.pop();
             }
-            //removing "("
+            //removing "(" from the stack
             expStack.pop();
         }
     }
@@ -117,6 +129,7 @@ string toPostfix(string expression) {
 //  trimming final expression
     return trim(postfixExpression);
 }
+// return a1 op b1
 string eval(string a1, string op, string b1) {
     if (!isOperator(op)) {
         cout<<"Invalid operator "<<op<<endl;
@@ -147,29 +160,30 @@ string eval(string a1, string op, string b1) {
     }
     return ans;
 }
-
+//return evaluated postfix expression - could be a number or 0 or 1 if boolean
 string evaluatePostfix(string postfixExpression) {
-    //string will be trimmed correctly, so nothing to worry about
+    //string will be trimmed correctly at this point, so nothing to worry about
     //further checks below so that expression can def be evaluated
     stringstream exp(postfixExpression);
-    string el;
+    string token;
+    //evalStack will hold numbers only
     stack<string> evalStack;
     string output;
     string a,b;
     
-    while (getline(exp, el, ' ')) {
-        if (isNumber(el)) {
-            evalStack.push(el);
+    while (getline(exp, token, ' ')) {
+        if (isNumber(token)) {
+            evalStack.push(token);
         }
-        else if(isOperator(el)) {
+        else if(isOperator(token)) {
             a = evalStack.top();
             evalStack.pop();
             b = evalStack.top();
             evalStack.pop();
-            evalStack.push(eval(b, el, a));
+            evalStack.push(eval(b, token, a));
         }
         else {
-            cout<<"Invalid token encountered - not a number or operator: "<<el<<endl;
+            cout<<"Invalid token encountered - not a number or operator: "<<token<<endl;
             break;
         }
     }
@@ -179,6 +193,7 @@ string evaluatePostfix(string postfixExpression) {
     }
     return evalStack.top();
 }
+//evaluate an infix expression
 string evaluateInfix(string infixExpression) {
     //checking only num op or () is in toPostfix
     //trimming happens in toPostfix
