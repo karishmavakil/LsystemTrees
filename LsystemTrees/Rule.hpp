@@ -24,15 +24,21 @@
 class Rule {
 public:
     Symbol input;
+    Symbol left;
+    Symbol right;
     vector<Symbol> output;
     string condition;
-    bool parametric;
-    bool isApplicable(Symbol input);
+    bool isLeftContextSensitive;
+    bool isRightContextSensitive;
     //input symbol must have single variables or numbers
     //output symbols may have expressions using those variables in their parameters
+    bool isApplicable(Symbol input);
+    bool isApplicableWithContext(Symbol left, Symbol input, Symbol right);
+    Rule(Symbol left, Symbol input, Symbol right, string condition, vector<Symbol> output);
     Rule(Symbol input, string condition, vector<Symbol> output);
     Rule(Symbol input, vector<Symbol> output);
     vector<Symbol> apply(Symbol input);
+    vector<Symbol> applyWithContext(Symbol left, Symbol input, Symbol right);
     void printState();
 };
 vector<string> replaceParam(vector<string> &parameters, string variable, string value);
