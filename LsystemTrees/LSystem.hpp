@@ -38,7 +38,9 @@ public:
     LSystem();
     void clear();
     void applyRules();
+    void applyRulesWithContext();
     void applyRules(int n);
+    void applyRulesWithContext(int n);
     void printCurrent();
 };
 

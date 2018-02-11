@@ -15,7 +15,7 @@ LSystem::LSystem(Symbol s, vector<Rule> ruleset) {
     rules = ruleset;
 }
 LSystem::LSystem(){
-
+    
 }
 void LSystem::clear() {
     //restart from original start
@@ -65,9 +65,61 @@ void LSystem::applyRules(){
 //    cout<<endl<<"Updated ";
 //    printCurrent();
 }
+void LSystem::applyRulesWithContext(){
+    //creating updated vector
+    vector<Symbol> updated = vector<Symbol>();
+    vector<Symbol>::iterator itNext = current.begin();
+    itNext++;
+    //iterate through current vector of symbols
+    //iteration 1 ; l will be 0, determine current as itCur and r as itNext
+    Symbol l = Symbol();
+    Symbol r = Symbol();
+    for (vector<Symbol>::iterator itCur = current.begin(); itCur!= current.end(); itCur++, itNext++) {
+        //subsequently l will have been updated in last round, current input and r are given by itCur and itNext
+        //itNext starts at pos 2
+        //in the last iteration itNext will be meaningless. r must be assigned to empty
+        if (itNext == current.end()) {
+            r = Symbol();
+        }
+        else {
+            r = *itNext;
+        }
+        //at this point we have the relevant l and r and current and we loop through the rules to find something relevant
+        bool found = false;
+        //iterate over all rules
+        for(vector<Rule>::iterator itRul = rules.begin(); itRul!= rules.end(); itRul++) {
+            //            cout<<" rule input ";
+            itRul->input.printState();
+            //if you find a rule to which the current Symbol is applicable with contexts l and r
+            if(itRul->isApplicableWithContext(l, *itCur, r)){
+                //                cout<<" matched ";
+                //find the output of the rule
+                vector<Symbol> out = itRul->applyWithContext(l, *itCur, r);
+                //insert it in updated
+                updated.insert(updated.end(), out.begin(), out.end());
+                //rule was found
+                found = true;
+                break;
+            }
+        }
+        // went through all rules, none applied, so we keep the symbol the same
+        if (!found)
+            updated.push_back(*itCur);
+        //        cout<<endl;
+        l = *itCur;
+    }
+    current = updated;
+        cout<<endl<<"Updated ";
+        printCurrent();
+}
 void LSystem::applyRules(int n) {
     for (int i =0; i < n; i++) {
         applyRules();
+    }
+}
+void LSystem::applyRulesWithContext(int n) {
+    for (int i =0; i < n; i++) {
+        applyRulesWithContext();
     }
 }
         
