@@ -7,7 +7,7 @@
 //
 
 #include "LSystem.hpp"
-
+#include <random>
 LSystem::LSystem(Symbol s, vector<Rule> ruleset) {
     start = s;
     current = vector<Symbol>();
@@ -40,20 +40,32 @@ void LSystem::applyRules(){
         itCur->printState();
         //haven't found it yet
         bool found = false;
+        float probScale = 1.0f;
+        random_device rd{}; // use to seed the rng
+        mt19937 rng{rd()};
         //iterate over all rules
         for(itRul = rules.begin(); itRul!= rules.end(); itRul++) {
-//            cout<<" rule input ";
+            cout<<" rule input ";
             itRul->input.printState();
             //if you find a rule to which the current Symbol is applicable
             if(itRul->isApplicable(*itCur)){
 //                cout<<" matched ";
                 //find the output of the rule
-                vector<Symbol> out = itRul->apply(*itCur);
-                //insert it in updated
-                updated.insert(updated.end(), out.begin(), out.end());
-                //rule was found
-                found = true;
-                break;
+                double p = itRul->probability / probScale;
+                bernoulli_distribution d(p);
+                bool yes = d(rng);
+                if (yes) {
+                    vector<Symbol> out = itRul->apply(*itCur);
+                    //insert it in updated
+                    updated.insert(updated.end(), out.begin(), out.end());
+                    //rule was found
+                    found = true;
+                    break;
+                }
+                else {
+                    probScale = probScale * (1 - itRul->probability/ probScale);
+                    continue;
+                }
             }
         }
         // went through all rules, none applied, so we keep the symbol the same
@@ -62,8 +74,8 @@ void LSystem::applyRules(){
 //        cout<<endl;
     }
     current = updated;
-//    cout<<endl<<"Updated ";
-//    printCurrent();
+    cout<<endl<<"Updated ";
+    printCurrent();
 }
 void LSystem::applyRulesWithContext(){
     //creating updated vector
@@ -85,6 +97,9 @@ void LSystem::applyRulesWithContext(){
             r = *itNext;
         }
         //at this point we have the relevant l and r and current and we loop through the rules to find something relevant
+        float probScale = 1.0f;
+        random_device rd{}; // use to seed the rng
+        mt19937 rng{rd()};
         bool found = false;
         //iterate over all rules
         for(vector<Rule>::iterator itRul = rules.begin(); itRul!= rules.end(); itRul++) {
@@ -94,12 +109,21 @@ void LSystem::applyRulesWithContext(){
             if(itRul->isApplicableWithContext(l, *itCur, r)){
                 //                cout<<" matched ";
                 //find the output of the rule
-                vector<Symbol> out = itRul->applyWithContext(l, *itCur, r);
-                //insert it in updated
-                updated.insert(updated.end(), out.begin(), out.end());
-                //rule was found
-                found = true;
-                break;
+                double p = itRul->probability / probScale;
+                bernoulli_distribution d(p);
+                bool yes = d(rng);
+                if (yes) {
+                    vector<Symbol> out = itRul->applyWithContext(l, *itCur, r);
+                    //insert it in updated
+                    updated.insert(updated.end(), out.begin(), out.end());
+                    //rule was found
+                    found = true;
+                    break;
+                }
+                else {
+                    probScale = probScale * (1 - itRul->probability/ probScale);
+                    continue;
+                }
             }
         }
         // went through all rules, none applied, so we keep the symbol the same
