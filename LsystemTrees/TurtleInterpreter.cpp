@@ -47,6 +47,7 @@ TurtleInterpreter::TurtleInterpreter(Turtle t, LSystem l){
     branchStepRatio = 0.85;
     minRadius = 0.03;
     iterations = 5;
+    useContexts = false;
 };
 vector<Symbol> TurtleInterpreter::getInstructions(){
     return lsystem.current;
@@ -65,7 +66,12 @@ void TurtleInterpreter::refreshTurtle(){
 };
 void TurtleInterpreter::generateInformation(){
     lsystem.clear();
-    lsystem.applyRules(iterations);
+    if (useContexts) {
+        lsystem.applyRulesWithContext(iterations);
+    }
+    else {
+        lsystem.applyRules(iterations);
+    }
     vector<Symbol> instructions = lsystem.current;
     for(vector<Symbol>::iterator itInstr = instructions.begin(); itInstr != instructions.end(); itInstr++) {
         vector<GLfloat> p = itInstr->getParameters();

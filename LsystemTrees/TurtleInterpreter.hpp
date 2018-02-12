@@ -54,6 +54,7 @@ public:
     GLfloat branchThicknessRatio = 0.93;
     GLfloat branchStepRatio = 0.95;
     GLfloat minRadius = 0.015;
+    bool useContexts;
     int iterations;
     GLenum drawingMode = GL_TRIANGLES;
     TurtleInterpreter(Turtle t, LSystem l);
