@@ -19,6 +19,7 @@ Rule::Rule(Symbol in, string cond, vector<Symbol> out) : input(in){
     right = Symbol();
     isLeftContextSensitive = false;
     isRightContextSensitive = false;
+    probability = 1;
 }
 Rule::Rule(Symbol in, vector<Symbol> out) : input(in){
     input = in;
@@ -28,6 +29,7 @@ Rule::Rule(Symbol in, vector<Symbol> out) : input(in){
     right = Symbol();
     isLeftContextSensitive = false;
     isRightContextSensitive = false;
+    probability = 1;
 
 }
 Rule::Rule(Symbol l, Symbol in, Symbol r, string cond, vector<Symbol> out) {
@@ -38,6 +40,7 @@ Rule::Rule(Symbol l, Symbol in, Symbol r, string cond, vector<Symbol> out) {
     right = r;
     isLeftContextSensitive = !l.equals(Symbol());
     isRightContextSensitive = !r.equals(Symbol());
+    probability = 1;
 }
 
 //checks is rule can be applied to this Symbol in
@@ -204,5 +207,11 @@ void Rule::printState() {
     for (vector<Symbol>::iterator it = output.begin(); it != output.end(); ++it){
         it->printState();
     }
+    cout<<" Left ";
+    left.printState();
+    cout<<" Right ";
+    right.printState();
+    cout<<" Probability ";
+    cout<<probability;
     cout<<endl;
 }

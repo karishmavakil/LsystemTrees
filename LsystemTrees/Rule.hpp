@@ -28,6 +28,7 @@ public:
     Symbol right;
     vector<Symbol> output;
     string condition;
+    float probability;
     bool isLeftContextSensitive;
     bool isRightContextSensitive;
     //input symbol must have single variables or numbers
