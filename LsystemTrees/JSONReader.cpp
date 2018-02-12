@@ -98,6 +98,9 @@ TurtleInterpreter createInterpreter(const char * json_file) {
     if (j.find("iterations") != j.end()) {
         interpreter.iterations = j["iterations"];
     }
+    if (j.find("useContexts") != j.end()) {
+        interpreter.useContexts = j["useContexts"];
+    }
     interpreter.printVariables();
     return interpreter;
 }
@@ -122,11 +125,34 @@ Turtle createTurtle(json j) {
 //Rule must have input and output
 Rule createRule(json j) {
     Symbol input = createSymbol(j["Input"]);
+    Symbol left = Symbol();
+    Symbol right = Symbol();
+    float probability = 1;
     vector<Symbol> output = createSymbols(j["Output"]);
     string condition = "";
     if (j.find("Condition") != j.end()) {
         condition = j["Condition"];
     }
+    if (j.find("Left Context") != j.end()) {
+        left = createSymbol(j["Left Context"]);
+    }
+    if (j.find("Right Context") != j.end()) {
+        right = createSymbol(j["Right Context"]);
+    }
+    if (j.find("Probability") != j.end()) {
+        probability = j["Probability"];
+    }
 //    Rule(input, condition, output).printState();
-    return Rule(input, condition, output);
+    if (left.equals(Symbol()) && right.equals(Symbol())) {
+        Rule r = Rule(input, condition, output);
+        r.probability = probability;
+        r.printState();
+        return r;
+    }
+    else {
+        Rule r = Rule(left, input,right, condition, output);
+        r.probability = probability;
+        r.printState();
+        return r;
+    }
 }
