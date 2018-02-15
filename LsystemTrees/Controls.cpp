@@ -28,7 +28,10 @@ float height = -4.0f;
 vec3 position = vec3( 0, height, radius );
 float angle = 3.14f/2.0f;
 float speed = 3.0f; // 3 units / second
-
+vec3 LightPos = vec3(0 , height, radius/3);
+vec3 getLightPos(){
+    return LightPos;
+}
 void computeMatricesFromInputs(GLFWwindow* window){
     
     // glfwGetTime is called only once, the first time this function is called
@@ -59,7 +62,12 @@ void computeMatricesFromInputs(GLFWwindow* window){
                         height,
                         radius * sin(angle)
                         );
+    LightPos = vec3( radius/ 3 * cos(angle),
+                    height,
+                   radius / 3 * sin(angle)
+);
     // Camera matrix
+    
     ViewMatrix       = lookAt(
                                    position,           // Camera is here
                                    vec3(0,-1,0), // and looks here : at the same position

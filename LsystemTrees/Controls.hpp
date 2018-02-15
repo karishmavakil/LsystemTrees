@@ -18,5 +18,6 @@ using namespace glm;
 #include <GLFW/glfw3.h>
 void computeMatricesFromInputs(GLFWwindow* window);
 mat4 getViewMatrix();
+vec3 getLightPos();
 
 #endif /* Controls_hpp */
