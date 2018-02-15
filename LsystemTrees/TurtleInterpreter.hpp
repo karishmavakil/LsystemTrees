@@ -40,6 +40,8 @@ class TurtleInterpreter {
 //    vector<Symbol> instructions;
     vector<vec3> vertices;
     vector<vec3> colours;
+    vector<vec3> normals;
+    vector<vec2> uvs;
     stack<vec3> positionStack;
     stack<vec3> headingStack;
     stack<vec3> leftStack;
@@ -47,6 +49,7 @@ class TurtleInterpreter {
     stack<GLfloat> radiusStack;
     stack<GLfloat> stepStack;
     void addCylinderVertices (vec3 centre1, vec3 centre2, vec3 axis, vec3 normal, GLfloat radius);
+    void addLeafVertices(vec3 end, vec3 heading, GLfloat length);
 public:
     GLfloat branchRadius = 0.06f;
     GLfloat branchStep = 0.25f;
@@ -61,6 +64,8 @@ public:
     vector<Symbol> getInstructions();
     vector<vec3> getVertices();
     vector<vec3> getColours();
+    vector<vec3> getNormals();
+    vector<vec2> getUVs();
     LSystem getLSystem();
     void refreshTurtle();
     void generateInformation();

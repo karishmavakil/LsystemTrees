@@ -58,6 +58,12 @@ vector<vec3> TurtleInterpreter::getVertices(){
 vector<vec3> TurtleInterpreter::getColours(){
     return colours;
 };
+vector<vec3> TurtleInterpreter::getNormals(){
+    return normals;
+};
+vector<vec2> TurtleInterpreter::getUVs(){
+    return uvs;
+};
 LSystem TurtleInterpreter::getLSystem(){
     return lsystem;
 }
@@ -143,34 +149,65 @@ void TurtleInterpreter::generateInformation(){
 //#declare MediumWood = color red 0.65 green 0.50 blue 0.39
 //#declare LightWood = color red 0.91 green 0.76 blue 0.65
 
-void TurtleInterpreter::addCylinderVertices (vec3 centre1, vec3 centre2, vec3 axis, vec3 normal, GLfloat radius) {
+void TurtleInterpreter::addCylinderVertices (vec3 centre1, vec3 centre2, vec3 axis, vec3 perp, GLfloat radius) {
     vector<vec3> cylinderVertices;
     vector<vec3> cylinderColours;
-
-    vec4 point1 = radius * vec4(normalize(normal), 0);
-    vec4 point2 = radius * 0.75f * vec4(normalize(normal), 0);
-    
-    mat4 rotation = rotate(mat4(1.0f),(float) M_PI/3, normalize(axis));
-    for(int i = 0; i < 6; i++){
+    vector<vec3> cylinderNormals;
+    vector<vec2> cylinderUVs;
+    vec4 point1 = radius * vec4(normalize(perp), 0);
+    vec4 point2 = radius * 0.75f * vec4(normalize(perp), 0);
+    vec3 side1, side2;
+    vec3 normal;
+    float n = 11;
+    mat4 rotation = rotate(mat4(1.0f),(float) (2 * M_PI )/ n, normalize(axis));
+    for(int i = 0; i < n; i++){
+        
         cylinderVertices.push_back(vec3(point1) + centre1);
+        cylinderUVs.push_back(vec2(1, i/n));
         cylinderColours.push_back(vec3(0.36, 0.25, 0.2));
         cylinderVertices.push_back(vec3(point2) + centre2);
+        cylinderUVs.push_back(vec2(0, i/n));
+
         cylinderColours.push_back(vec3(0.59, 0.41, 0.31));
+        side1 = vec3(point1) + centre1 - vec3(point2) - centre2;
         vec3 prev = vec3(point2) + centre2;
         point1 = point1 * rotation;
         point2 = point2 * rotation;
         cylinderVertices.push_back(vec3(point1) + centre1);
+        cylinderUVs.push_back(vec2(1, (i+1)/n));
+
+        side2 = - prev + vec3(point1) + centre1;
+        normal = cross(side1, side2);
+        cylinderNormals.push_back(normal);
+        cylinderNormals.push_back(normal);
+        cylinderNormals.push_back(normal);
         cylinderColours.push_back(vec3(0.55, 0.47, 0.14));
         cylinderVertices.push_back(prev);
+        cylinderUVs.push_back(vec2(0, i/n));
+
         cylinderColours.push_back(vec3(0.65, 0.5, 0.39));
         cylinderVertices.push_back(vec3(point1) + centre1);
+        cylinderUVs.push_back(vec2(1, (i+1)/n));
+
+        side1 = vec3(point2) + centre2 - vec3(point1) - centre1;
+        normal = cross(side2, side1);
+        cylinderNormals.push_back(normal);
+        cylinderNormals.push_back(normal);
+        cylinderNormals.push_back(normal);
         cylinderColours.push_back(vec3(0.91, 0.76, 0.65));
         cylinderVertices.push_back(vec3(point2) + centre2);
+        cylinderUVs.push_back(vec2(0, (i+1)/n));
         cylinderColours.push_back(vec3(0.36, 0.25, 0.2));
 
     }
     vertices.insert(vertices.end(), cylinderVertices.begin(), cylinderVertices.end());
     colours.insert(colours.end(), cylinderColours.begin(), cylinderColours.end());
+    normals.insert(normals.end(), cylinderNormals.begin(), cylinderNormals.end());
+    uvs.insert(uvs.end(), cylinderUVs.begin(), cylinderUVs.end());
+}
+
+void TurtleInterpreter::addLeafVertices(vec3 end, vec3 dir, GLfloat length) {
+    
 }
 void TurtleInterpreter::printVariables() {
     cout<<"branchRadius "<<branchRadius<<endl;
