@@ -101,6 +101,24 @@ TurtleInterpreter createInterpreter(const char * json_file) {
     if (j.find("useContexts") != j.end()) {
         interpreter.useContexts = j["useContexts"];
     }
+    if (j.find("maxLeafRadius") != j.end()) {
+        interpreter.maxLeafRadius = j["maxLeafRadius"];
+    }
+    if (j.find("leafLength") != j.end()) {
+        interpreter.leafLength = j["leafLength"];
+    }
+    if (j.find("leafWidth") != j.end()) {
+        interpreter.leafWidth = j["leafWidth"];
+    }
+    if (j.find("leafDensity") != j.end()) {
+        interpreter.leafDensity = j["leafDensity"];
+    }
+    if (j.find("woodTextureFile") != j.end()) {
+        interpreter.woodTextureFile = j["woodTextureFile"];
+    }
+    if (j.find("leafTextureFile") != j.end()) {
+        interpreter.leafTextureFile = j["leafTextureFile"];
+    }
     interpreter.printVariables();
     return interpreter;
 }
