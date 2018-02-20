@@ -23,12 +23,15 @@ mat4 getViewMatrix(){
 }
 
 // Initial position : on +Z
-float radius = 13;
+float radius = 16;
 float height = -4.0f;
 vec3 position = vec3( 0, height, radius );
 float angle = 3.14f/2.0f;
 float speed = 3.0f; // 3 units / second
-vec3 LightPos = vec3(0 , height, radius/3);
+vec3 LightPos = vec3( 16/ 2 * cos(angle - 3.14/5),
+                                 0,
+                     16 / 2 * sin(angle - 3.14/5));
+
 vec3 getLightPos(){
     return LightPos;
 }
@@ -42,12 +45,20 @@ void computeMatricesFromInputs(GLFWwindow* window){
     float deltaTime = float(currentTime - lastTime);
     
     // Move closer
-    if (glfwGetKey( window, GLFW_KEY_UP ) == GLFW_PRESS){
+    if (glfwGetKey( window, GLFW_KEY_S ) == GLFW_PRESS){
         radius -= speed * deltaTime * 0.5;
     }
     // Move back
-    if (glfwGetKey( window, GLFW_KEY_DOWN ) == GLFW_PRESS){
+    if (glfwGetKey( window, GLFW_KEY_A ) == GLFW_PRESS){
         radius += speed * deltaTime * 0.5;
+    }
+    // Move up
+    if (glfwGetKey( window, GLFW_KEY_UP ) == GLFW_PRESS){
+        height += speed * deltaTime * 0.5;
+    }
+    // Move down
+    if (glfwGetKey( window, GLFW_KEY_DOWN ) == GLFW_PRESS){
+        height -= speed * deltaTime * 0.5;
     }
     // Move right
     if (glfwGetKey( window, GLFW_KEY_RIGHT ) == GLFW_PRESS){
@@ -62,9 +73,9 @@ void computeMatricesFromInputs(GLFWwindow* window){
                         height,
                         radius * sin(angle)
                         );
-    LightPos = vec3( radius/ 3 * cos(angle),
-                    height,
-                   radius / 3 * sin(angle)
+    LightPos = vec3( 16/ 2 * cos(angle - 3.14/5),
+                    0,
+                   16 / 2 * sin(angle - 3.14/5)
 );
     // Camera matrix
     
