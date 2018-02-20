@@ -37,7 +37,7 @@ void LSystem::applyRules(){
     //iterate through current vector of symbols
     for (vector<Symbol>::iterator itCur = current.begin(); itCur!= current.end(); itCur++) {
 //        cout<<"current symbol ";
-        itCur->printState();
+//        itCur->printState();
         //haven't found it yet
         bool found = false;
         float probScale = 1.0f;
@@ -45,8 +45,8 @@ void LSystem::applyRules(){
         mt19937 rng{rd()};
         //iterate over all rules
         for(itRul = rules.begin(); itRul!= rules.end(); itRul++) {
-            cout<<" rule input ";
-            itRul->input.printState();
+//            cout<<" rule input ";
+//            itRul->input.printState();
             //if you find a rule to which the current Symbol is applicable
             if(itRul->isApplicable(*itCur)){
 //                cout<<" matched ";
@@ -74,8 +74,8 @@ void LSystem::applyRules(){
 //        cout<<endl;
     }
     current = updated;
-    cout<<endl<<"Updated ";
-    printCurrent();
+//    cout<<endl<<"Updated ";
+//    printCurrent();
 }
 void LSystem::applyRulesWithContext(){
     //creating updated vector
@@ -104,7 +104,7 @@ void LSystem::applyRulesWithContext(){
         //iterate over all rules
         for(vector<Rule>::iterator itRul = rules.begin(); itRul!= rules.end(); itRul++) {
             //            cout<<" rule input ";
-            itRul->input.printState();
+//            itRul->input.printState();
             //if you find a rule to which the current Symbol is applicable with contexts l and r
             if(itRul->isApplicableWithContext(l, *itCur, r)){
                 //                cout<<" matched ";
@@ -133,8 +133,8 @@ void LSystem::applyRulesWithContext(){
         l = *itCur;
     }
     current = updated;
-        cout<<endl<<"Updated ";
-        printCurrent();
+//        cout<<endl<<"Updated ";
+//        printCurrent();
 }
 void LSystem::applyRules(int n) {
     for (int i =0; i < n; i++) {
