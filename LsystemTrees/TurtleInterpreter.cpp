@@ -92,19 +92,67 @@ void TurtleInterpreter::generateInformation(){
     else {
         lsystem.applyRules(iterations);
     }
+    int branches = 0;
+    int leaves = 0;
     vector<Symbol> instructions = lsystem.current;
+    lsystem.printCurrent();
     for(vector<Symbol>::iterator itInstr = instructions.begin(); itInstr != instructions.end(); itInstr++) {
         vector<GLfloat> p = itInstr->getParameters();
+
         vector<vec3> v1;
         vec3 oldPosition;
         switch (itInstr->letter) {
             case 'F':
                 oldPosition = turtle.getPosition();
-                turtle.forward(p[0]*branchStep);
+                turtle.forward((p[0] > 0 ? p[0] :  1)*branchStep);
                 addBranchVertices(oldPosition, turtle.getPosition(), turtle.getHeading(), turtle.getLeft(), branchRadius);
+                branches++;
+            
                 if(branchRadius <= maxLeafRadius){
                     addLeavesVertices(oldPosition, turtle.getPosition(), turtle.getHeading(), turtle.getLeft(), branchRadius);
+                    leaves += leafDensity;
                 }
+                //                vertices.push_back(oldPos);
+                //                vertices.push_back(position);
+                if (branchRadius > minRadius){
+                    branchRadius = branchThicknessRatio * branchRadius;
+                    branchStep = branchStepRatio * branchStep;
+                }
+                break;
+            case 'G':
+                oldPosition = turtle.getPosition();
+                turtle.forward((p[0] > 0 ? p[0] :  1)*branchStep);
+                addBranchVertices(oldPosition, turtle.getPosition(), turtle.getHeading(), turtle.getLeft(), branchRadius * 2);
+                branches++;
+                
+                if(branchRadius <= maxLeafRadius){
+                    addLeavesVertices(oldPosition, turtle.getPosition(), turtle.getHeading(), turtle.getLeft(), branchRadius * 2);
+                    leaves += leafDensity;
+                }
+                //                vertices.push_back(oldPos);
+                //                vertices.push_back(position);
+                if (branchRadius > minRadius){
+                    branchRadius = branchThicknessRatio * branchRadius;
+                    branchStep = branchStepRatio * branchStep;
+                }
+                break;
+            case 'B':
+                oldPosition = turtle.getPosition();
+                turtle.forward((p[0] > 0 ? p[0] :  1)*branchStep);
+                addBranchVertices(oldPosition, turtle.getPosition(), turtle.getHeading(), turtle.getLeft(), branchRadius);
+                branches++;
+                //                vertices.push_back(oldPos);
+                //                vertices.push_back(position);
+                if (branchRadius > minRadius){
+                    branchRadius = branchThicknessRatio * branchRadius;
+                    branchStep = branchStepRatio * branchStep;
+                }
+                break;
+            case 'T':
+                oldPosition = turtle.getPosition();
+                turtle.forward((p[0] > 0 ? p[0] :  1)*branchStep);
+                addBranchVertices(oldPosition, turtle.getPosition(), turtle.getHeading(), turtle.getLeft(), branchRadius * 2);
+                branches++;
                 //                vertices.push_back(oldPos);
                 //                vertices.push_back(position);
                 if (branchRadius > minRadius){
@@ -116,22 +164,22 @@ void TurtleInterpreter::generateInformation(){
                 turtle.forward(p[0]*0.35f);
                 break;
             case '+':
-                turtle.yaw(branchAngle);
+                turtle.yaw((p.empty()? 1 : p[0]) * branchAngle);
                 break;
             case '-':
-                turtle.yaw(-branchAngle);
+                turtle.yaw((p.empty()? 1 : p[0]) * -branchAngle);
                 break;
             case '&':
-                turtle.pitch(branchAngle);
+                turtle.pitch((p.empty()? 1 : p[0]) * branchAngle);
                 break;
             case '^':
-                turtle.pitch(-branchAngle);
+                turtle.pitch((p.empty()? 1 : p[0]) * -branchAngle);
                 break;
             case '/':
-                turtle.roll(branchAngle);
+                turtle.roll((p.empty()? 1 : p[0]) * branchAngle);
                 break;
             case '\\':
-                turtle.roll(-branchAngle);
+                turtle.roll((p.empty()? 1 : p[0]) * -branchAngle);
                 break;
             case '[':
                 positionStack.push(turtle.getPosition());
@@ -161,6 +209,8 @@ void TurtleInterpreter::generateInformation(){
     }
     branchVerticesSize = branchVertices.size();
     leafVerticesSize = leafVertices.size();
+    cout<<"#branches : "<<branches<<endl;
+    cout<<"#leaves : "<<leaves<<endl;
 }
 //#declare DarkBrown = color red 0.36 green 0.25 blue 0.20
 //#declare DarkTan = color red 0.59 green 0.41 blue 0.31
@@ -220,6 +270,10 @@ void TurtleInterpreter::addBranchVertices (vec3 centre1, vec3 centre2, vec3 axis
 void TurtleInterpreter::addLeafVertices(vec3 end, vec3 dir, vec3 perp) {
     GLfloat width = leafWidth;
     GLfloat length = leafLength;
+    if (branchStep < 0.02) {
+        length = 0.2;
+        width = 0.1;
+    }
     vec3 normal = cross(dir, perp);
     vec3 outer = end + length * dir;
     vec3 left = end + length/3 * dir + width / 2 * perp + 0.08 * normal;
@@ -260,6 +314,9 @@ void TurtleInterpreter::addLeavesVertices(vec3 centre1, vec3 centre2, vec3 axis,
     vec4 endDir = radius * vec4(normalize(perp), 0);
     vec3 normal;
     GLfloat n = (float) leafDensity;
+    if (branchStep < 0.15) {
+        n= 4;
+    }
     mat4 rotation = rotate(mat4(1.0f),(float) (2 * M_PI )/ n, normalize(axis));
     for(int i = 0; i < n; i++){
         endDir = endDir * rotation;
@@ -269,6 +326,7 @@ void TurtleInterpreter::addLeavesVertices(vec3 centre1, vec3 centre2, vec3 axis,
     }
     
 }
+
 void TurtleInterpreter::printVariables() {
     cout<<"branchRadius "<<branchRadius<<endl;
     cout<<"branchStep "<<branchStep<<endl;
