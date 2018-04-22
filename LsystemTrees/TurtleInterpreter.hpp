@@ -57,6 +57,8 @@ class TurtleInterpreter {
     void addLeavesVertices (vec3 centre1, vec3 centre2, vec3 axis, vec3 normal, GLfloat radius);
 public:
     GLfloat branchRadius = 0.06f;
+    GLfloat treeRadius = 0.06f;
+
     GLfloat branchStep = 0.25f;
     GLfloat branchAngle = 0.6f;
     GLfloat branchThicknessRatio = 0.93;
