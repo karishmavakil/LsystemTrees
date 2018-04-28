@@ -1,0 +1,39 @@
+{
+    "branchRadius" : 0.2,
+    "branchStep" : 1,
+    "branchAngle" : 0.86,
+    "branchThicknessRatio" : 0.7,
+    "branchStepRatio" : 0.9,
+    "minRadius" : 0.01,
+    "leafLength" : 0.8,
+    "leafWidth" : 0.35,
+    "leafDensity" : 8,
+    "leafTextureFile" : "birch.bmp",
+    "woodTextureFile" : "woodphoto.bmp",
+    "Turtle": {
+        "x": 0,
+        "y": -8,
+        "z": 0
+    },
+    "LSystem": {
+        "Start": "G{7}",
+        "Rules" : [{
+                   "Input" : "G{x}",
+                   "Output" : "/T{x - 0.4}\\{0.9}[+{0.9}F{x / 1.4}][-{0.9}&{1.2}F{x / 1.4}]\\{-0.5}[/^{0.9}F{x / 1.4}]/{0.2}[+{0.9}F{x / 1.4}][-{0.9}&{0.6}F{x / 1.4}][&{0.9}+{0.2}F{x / 1.4}][^{0.9}+{0.7}F{x / 1.4}][+{1.5}/{0.8}^{1.5}F{x / 2}]G{x - 0.7}",
+                   "Condition" : "x <= 7"
+                   },
+                   {
+                   "Input" : "G{x}",
+                   "Output" : "T{x / 1.6}[+{1.5}F{x}][-{1.5}F{x}]",
+                   "Condition" : "x == 1"
+                   },
+                   {
+                   "Input" : "F{x}",
+                   "Output" : "F{x / 1.8}[-{0.2}F{x / 1.6}-{0.25}F{x / 1.6}-{0.25}F{x / 1.6}]\\[^{0.35}F{x / 1.6}^{0.2}F{x / 1.6}^{0.2}F{x / 1.6}]F{x / 1.6}//[-{0.2}F{x / 1.6}-{0.25}F{x / 1.6}-{0.25}F{x / 1.6}]",
+                   "Condition" : "x > 2"
+                   }]
+    },
+    "iterations" : 11
+}
+
+
