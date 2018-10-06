@@ -1,24 +1,16 @@
-//
-//  Texture.cpp
-//  LsystemTrees
-//
-//  Created by Karishma Vakil on 14/02/2018.
-//  Copyright © 2018 Karishma Vakil. All rights reserved.
-//
+//adapted from tutorials on http://www.opengl-tutorial.org
 
 #include "Texture.hpp"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 //GLEW
 #define GLEW_STATIC
 #include <GL/glew.h>
-
 //GLFW
 #include <GLFW/glfw3.h>
 
-GLuint loadBMP_custom(const char * imagepath){
+GLuint loadBMP_custom(const char * imagepath) {
     
     printf("Reading image %s\n", imagepath);
     
@@ -33,7 +25,7 @@ GLuint loadBMP_custom(const char * imagepath){
     // Open the file
     FILE * file = fopen(imagepath,"rb");
     if (!file){
-        printf("%s could not be opened. Are you in the right directory ? Don't forget to read the FAQ !\n", imagepath);
+        printf("%s could not be opened. check directory \n", imagepath);
         getchar();
         return 0;
     }
@@ -42,19 +34,19 @@ GLuint loadBMP_custom(const char * imagepath){
     
     // If less than 54 bytes are read, problem
     if ( fread(header, 1, 54, file)!=54 ){
-        printf("Not a correct BMP file\n");
+        printf("not a correct BMP file\n");
         fclose(file);
         return 0;
     }
     // A BMP files always begins with "BM"
     if ( header[0]!='B' || header[1]!='M' ){
-        printf("Not a correct BMP file\n");
+        printf("not a correct BMP file\n");
         fclose(file);
         return 0;
     }
     // Make sure this is a 24bpp file
-    if ( *(int*)&(header[0x1E])!=0  )         {printf("Not a correct BMP file\n");    fclose(file); return 0;}
-    if ( *(int*)&(header[0x1C])!=24 )         {printf("Not a correct BMP file\n");    fclose(file); return 0;}
+    if ( *(int*)&(header[0x1E])!=0  )         {printf("not a correct BMP file\n");    fclose(file); return 0;}
+    if ( *(int*)&(header[0x1C])!=24 )         {printf("not a correct BMP file\n");    fclose(file); return 0;}
     
     // Read the information about the image
     dataPos    = *(int*)&(header[0x0A]);

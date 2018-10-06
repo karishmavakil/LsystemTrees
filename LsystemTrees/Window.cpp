@@ -1,11 +1,4 @@
-//
-//  Window.cpp
-//  LsystemTrees
-//
-//  Created by Karishma Vakil on 23/01/2018.
-//  Copyright © 2018 Karishma Vakil. All rights reserved.
-//
-
+//adapted from tutorials on http://www.opengl-tutorial.org
 #include "Window.hpp"
 //GLEW
 #define GLEW_STATIC
@@ -14,7 +7,6 @@
 //GLFW
 #include <GLFW/glfw3.h>
 
-// standard C++ libraries
 #include <cassert>
 #include <iostream>
 #include <stdexcept>
@@ -22,7 +14,7 @@
 
 const GLint WIDTH = 800, HEIGHT = 600;
 
-GLFWwindow *createWindow(){
+GLFWwindow *createWindow() {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -30,7 +22,7 @@ GLFWwindow *createWindow(){
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
     
-    GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Learn", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "L-systems", nullptr, nullptr);
     
     int screenWidth, screenHeight;
     glfwGetFramebufferSize(window, &screenWidth, &screenHeight);

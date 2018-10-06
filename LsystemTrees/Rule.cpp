@@ -1,10 +1,4 @@
-//
-//  Rule.cpp
-//  LsystemTrees
-//
-//  Created by Karishma Vakil on 14/01/2018.
-//  Copyright © 2018 Karishma Vakil. All rights reserved.
-//
+
 
 #include "Rule.hpp"
 #include <functional>
@@ -43,7 +37,7 @@ Rule::Rule(Symbol l, Symbol in, Symbol r, string cond, vector<Symbol> out) {
     probability = 1;
 }
 
-//checks is rule can be applied to this Symbol in
+//checks if rule can be applied to this Symbol in
 //first checks letters match and no of parameters are equal
 //then iterate through individual parameters
 //if input is a variable, shouldn't work

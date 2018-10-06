@@ -1,10 +1,4 @@
-//
-//  LSystem.hpp
-//  LsystemTrees
-//
-//  Created by Karishma Vakil on 14/01/2018.
-//  Copyright © 2018 Karishma Vakil. All rights reserved.
-//
+
 
 #ifndef LSystem_hpp
 #define LSystem_hpp

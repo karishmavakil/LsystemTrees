@@ -1,11 +1,4 @@
-//
-//  Texture.hpp
-//  LsystemTrees
-//
-//  Created by Karishma Vakil on 14/02/2018.
-//  Copyright © 2018 Karishma Vakil. All rights reserved.
-//
-
+//adapted from tutorials on http://www.opengl-tutorial.org
 #ifndef Texture_hpp
 #define Texture_hpp
 //GLEW

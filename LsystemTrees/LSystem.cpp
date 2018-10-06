@@ -1,10 +1,4 @@
-//
-//  LSystem.cpp
-//  LsystemTrees
-//
-//  Created by Karishma Vakil on 14/01/2018.
-//  Copyright © 2018 Karishma Vakil. All rights reserved.
-//
+
 
 #include "LSystem.hpp"
 #include <random>
@@ -31,11 +25,14 @@ void LSystem::printCurrent() {
 }
 void LSystem::applyRules(){
     //iterator over rules
+    int countOp = 0;
     vector<Rule>::iterator itRul = rules.begin();
+    int ruleApp = 0;
     //creating updated vector
     vector<Symbol> updated = vector<Symbol>();
     //iterate through current vector of symbols
     for (vector<Symbol>::iterator itCur = current.begin(); itCur!= current.end(); itCur++) {
+        
 //        cout<<"current symbol ";
 //        itCur->printState();
         //haven't found it yet
@@ -56,7 +53,9 @@ void LSystem::applyRules(){
                 bool yes = d(rng);
                 if (yes) {
                     vector<Symbol> out = itRul->apply(*itCur);
+                    ruleApp++;
                     //insert it in updated
+                    countOp += out.size();
                     updated.insert(updated.end(), out.begin(), out.end());
                     //rule was found
                     found = true;
@@ -64,21 +63,28 @@ void LSystem::applyRules(){
                 }
                 else {
                     probScale = probScale * (1 - itRul->probability/ probScale);
+                    countOp += 1;
                     continue;
                 }
             }
         }
         // went through all rules, none applied, so we keep the symbol the same
-        if (!found)
+        if (!found) {
             updated.push_back(*itCur);
+            countOp +=1;
+        }
 //        cout<<endl;
     }
     current = updated;
+    countOp +=1;
+    cout<<"RuleApp "<<ruleApp<<endl;
+    cout<<"Current Length "<<current.size()<<endl;
 //    cout<<endl<<"Updated ";
 //    printCurrent();
 }
 void LSystem::applyRulesWithContext(){
     //creating updated vector
+    int ruleApp = 0;
     vector<Symbol> updated = vector<Symbol>();
     vector<Symbol>::iterator itNext = current.begin();
     itNext++;
@@ -114,6 +120,7 @@ void LSystem::applyRulesWithContext(){
                 bool yes = d(rng);
                 if (yes) {
                     vector<Symbol> out = itRul->applyWithContext(l, *itCur, r);
+                    ruleApp++;
                     //insert it in updated
                     updated.insert(updated.end(), out.begin(), out.end());
                     //rule was found
@@ -133,6 +140,9 @@ void LSystem::applyRulesWithContext(){
         l = *itCur;
     }
     current = updated;
+    cout<<"RuleApp with Context "<<ruleApp<<endl;
+    cout<<"Current Length "<<current.size();
+
 //        cout<<endl<<"Updated ";
 //        printCurrent();
 }

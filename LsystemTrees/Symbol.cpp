@@ -1,10 +1,4 @@
-//
-//  Symbol.cpp
-//  LsystemTrees
-//
-//  Created by Karishma Vakil on 14/01/2018.
-//  Copyright © 2018 Karishma Vakil. All rights reserved.
-//
+
 #include <stdio.h>
 
 #include "Symbol.hpp"
