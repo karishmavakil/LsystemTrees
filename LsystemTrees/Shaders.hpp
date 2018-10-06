@@ -1,11 +1,4 @@
-//
-//  Shaders.hpp
-//  LsystemTrees
-//
-//  Created by Karishma Vakil on 23/01/2018.
-//  Copyright © 2018 Karishma Vakil. All rights reserved.
-//
-
+//adapted from tutorials on http://www.opengl-tutorial.org
 #ifndef Shaders_hpp
 #define Shaders_hpp
 
