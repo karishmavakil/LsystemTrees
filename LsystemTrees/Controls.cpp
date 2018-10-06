@@ -1,28 +1,17 @@
-//
-//  Controls.cpp
-//  LsystemTrees
-//
-//  Created by Karishma Vakil on 30/01/2018.
-//  Copyright © 2018 Karishma Vakil. All rights reserved.
-//
+//adapted from tutorials on http://www.opengl-tutorial.org
 
 #include "Controls.hpp"
-// Include GLFW
 #include <GLFW/glfw3.h>
-
-// Include GLM
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 using namespace glm;
-
-#include "controls.hpp"
 
 mat4 ViewMatrix;
 mat4 getViewMatrix(){
     return ViewMatrix;
 }
 
-// Initial position : on +Z
+// Initial position
 float radius = 16;
 float height = -4.0f;
 vec3 position = vec3( 0, height, radius );
@@ -40,44 +29,44 @@ void computeMatricesFromInputs(GLFWwindow* window){
     // glfwGetTime is called only once, the first time this function is called
     static double lastTime = glfwGetTime();
     
-    // Compute time difference between current and last frame
+    // time difference between curr and last frame
     double currentTime = glfwGetTime();
     float deltaTime = float(currentTime - lastTime);
     
-    // Move closer
+    // move closer
     if (glfwGetKey( window, GLFW_KEY_S ) == GLFW_PRESS){
-        radius -= speed * deltaTime * 0.5;
+        radius -= speed * deltaTime;
     }
-    // Move back
+    // move back
     if (glfwGetKey( window, GLFW_KEY_A ) == GLFW_PRESS){
-        radius += speed * deltaTime * 0.5;
+        radius += speed * deltaTime;
     }
-    // Move up
+    // move up
     if (glfwGetKey( window, GLFW_KEY_UP ) == GLFW_PRESS){
-        height += speed * deltaTime * 0.5;
+        height += speed * deltaTime;
     }
-    // Move down
+    // move down
     if (glfwGetKey( window, GLFW_KEY_DOWN ) == GLFW_PRESS){
-        height -= speed * deltaTime * 0.5;
+        height -= speed * deltaTime;
     }
-    // Move right
+    // move right
     if (glfwGetKey( window, GLFW_KEY_RIGHT ) == GLFW_PRESS){
-        angle +=  speed * deltaTime * 0.5;
+        angle +=  speed * deltaTime;
     }
-    // Strafe left
+    // move left
     if (glfwGetKey( window, GLFW_KEY_LEFT ) == GLFW_PRESS){
-        angle -=  speed * deltaTime * 0.5;
+        angle -=  speed * deltaTime;
     }
     position = vec3(
                         radius * cos(angle),
                         height,
                         radius * sin(angle)
                         );
-    LightPos = vec3( 16/ 2 * cos(angle - 3.14/5),
+    LightPos = vec3( 16 / 2 * cos(angle - 3.14/5),
                     0,
                    16 / 2 * sin(angle - 3.14/5)
 );
-    // Camera matrix
+    // camera matrix
     
     ViewMatrix       = lookAt(
                                    position,           // Camera is here
