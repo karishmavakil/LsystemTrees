@@ -7,7 +7,7 @@ L-systems, or Lindenmayer systems are similar to conventional formal grammars, e
 The L-system is used as the basis for creating branching patterns. The user inputs an L-system in a text file in JSON format along with some geometric parameters and texture images for leaves and wood, which is transoformed into a 3D model.
 The 3D model can be viewed from all directions and zoomed in/out using arrow keys.
 
-Different Types of L-systems for eg. Bracketed, Parametric, Stochastic and Context-sensitive L-systems have their own relevance with plant modelling.
+Different Types of L-systems for eg. Bracketed, Parametric, Conditional, Stochastic and Context-sensitive L-systems have their own relevance with plant modelling.
 The application supports L-systems with any mix of these features. An input file with ~40 lines is transformed to a 3D model with ~2 million vertices, thus showcasing the paradigm of data amplification - creating large entities with small input.
 
 ## Example Input
