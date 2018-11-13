@@ -4,7 +4,7 @@ A project based on procedural methods in computer graphics, which are commonly u
 Procedural methods describe these entities using semantic sequences of instructions which generate visually complex images on demand, as opposed to the conventional method of saving images as pieces of data and recalling them from memory when required 
 This application uses the procedural methods of L-systems, a type of formal grammar, to create complex 3D models of botanical trees.
 L-systems, or Lindenmayer systems are similar to conventional formal grammars, except all the rules are applied simultaneously in every iteration.
-The L-system is used as the basis for creating branching patterns. The user inputs an L-system in a text file in JSON format along with some geometric parameters and texture images for leaves and wood, which is transoformed into a 3D model.
+The L-system is used as the basis for creating branching patterns. The user inputs an L-system in a text file in JSON format along with various geometric parameters and texture images for leaves and wood, which is transoformed into a 3D model.
 The 3D model can be viewed from all directions and zoomed in/out using arrow keys.
 
 Different Types of L-systems for eg. Bracketed, Parametric, Conditional, Stochastic and Context-sensitive L-systems have their own relevance with plant modelling.
